@@ -1,0 +1,203 @@
+<ngx-loading [show]="getRolesLoading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <p-toast position="top-right"></p-toast>
+
+  <!-- body contents -->
+  <section id="pageContent">
+    <div class="pageContent-container" *ngIf="listViewSection">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">View Roles</span>
+        <p-button label="Add Role" icon="pi pi-plus-circle" (click)="addRole()" styleClass="p-button-sm addBtn">
+        </p-button>
+      </div>
+      <div class="PageContent">
+        <p-table #rolesdt [sortField]="defaultSortField" [sortOrder]="defaultSortOrder" [value]="filteredRoles"
+          [paginator]="true" [rowHover]="true" [(first)]="paginatorOptions.first" [rows]="paginatorOptions.rows"
+          [loading]="loading" [showCurrentPageReport]="true"
+          [tableStyle]="{ 'min-width': '50rem', 'font-size': '15px' }"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Roles"
+          [rowsPerPageOptions]="paginatorOptions.rowsPerPageOptions" [globalFilterFields]="['role_name']"
+          (onPage)="onPageChange($event)">
+
+          <ng-template pTemplate="caption">
+            <div class="searchOptions m-1">
+
+              <div class="column">
+                <p-dropdown [options]="options" [(ngModel)]="selectedOption" optionLabel="name">
+                </p-dropdown>
+              </div>
+
+              <div class="column">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText name="search" [(ngModel)]="searchValue" type="text"
+                  (ngModelChange)="search($event)" placeholder="Search" />
+                </span>
+              </div>
+
+              <div class="column">
+                Status : <p-dropdown [options]="statuses" (onChange)="changeStatus(selectedStatus.value) "
+                  [(ngModel)]="selectedStatus" optionLabel="name">
+                </p-dropdown>
+              </div>
+              <button style="margin-left: 10px;" pButton class="p-button-outlined" icon="pi pi-refresh"
+                (click)="clear(rolesdt)" pTooltip="Reset" tooltipPosition="left">
+              </button>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name"> Role Name <p-sortIcon field="name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="description">Role Description <p-sortIcon
+                  field="description"></p-sortIcon></th>
+              <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+              <!-- <th pSortableColumn="deleted">Deleted <p-sortIcon field="deleted"></p-sortIcon></th> -->
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-role>
+            <tr>
+              <td>{{ role?.name | uppercase}}</td>
+              <!-- <td>{{ role?.role_description }}</td> -->
+              <td>
+                <span *ngIf="role?.description.length > 50" [pTooltip]="role?.description" tooltipPosition="top">
+                  {{ role?.description | slice: 0:50 }}...
+                </span>
+                <span *ngIf="role?.description.length <= 50">{{ role?.description }}</span>
+              </td>
+              <td *ngIf="role?.is_active === true">
+                <div class="status-tag">
+                  <span class="w-1rem h-1rem border-circle border-1 surface-border absolute bg-green-400"></span>
+                  <span class="tagTxt">Active</span>
+                </div>
+              </td>
+              <td *ngIf="role?.is_active === false">
+                <div class="status-tag">
+                  <span class="w-1rem h-1rem border-circle border-1 surface-border absolute bg-red-400"></span>
+                  <span class="tagTxt">Inactive</span>
+                </div>
+
+              </td>
+              <!-- <td>{{ role?.deleted }}</td> -->
+              <td class="text-right gap-1" style="text-wrap:nowrap;">
+
+                <p-button icon="pi pi-pencil" (click)="addRole(role)"
+                  styleClass="p-button-sm p-button-secondary p-button-text ml-1" pTooltip="Edit Role"></p-button>
+
+                <!-- <p-button label="Edit" icon="pi pi-pencil" (click)="addRole(role)" styleClass="p-button-sm addBtn"></p-button> -->
+
+                <p-button icon="pi pi-trash" (click)="deleteRole(role)" tooltipPosition="left"
+                  styleClass="p-button-sm p-button-secondary p-button-text ml-2" pTooltip="Delete Role"></p-button>
+
+                <!-- <p-button icon="pi pi-ellipsis-v" styleClass="p-button-sm p-button-secondary p-button-text"></p-button> -->
+
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-role>
+            <tr>
+              <td colspan="7" style="text-align:center;padding: 1.2rem 1rem;">
+                No Roles Data Available
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+    </div>
+
+
+
+    <div *ngIf="addRoleSection" class="pageContent-container">
+
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName" *ngIf="!roleObj?.id">Add New Role</span>
+        <span class="pageName" *ngIf="roleObj?.id">Edit Role</span>
+      </div>
+      <div class="PageContent flex flex-column gap-4">
+        <form class="useraddform" novalidate #roleForm="ngForm">
+          <div class=" flex flex-column gap-1">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label> Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="role_name" #role_name="ngModel" [(ngModel)]="roleObj.name"
+                  [style]="{'height':'30px'}" required
+                  [ngClass]="{ 'is-invalid': roleForm.submitted && role_name.errors }" placeholder="" pInputText
+                  maxlength="50" />
+                <div *ngIf="roleForm.submitted && role_name.errors" class="invalid-feedback">
+                  <div *ngIf="role_name.errors['required']">Please enter Name.</div>
+                </div>
+              </div>
+
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Access privileges <span class="error">*</span></label>
+                <p-dropdown [options]="privileges" name="privileges_id" #privileges_id="ngModel"
+                  [(ngModel)]="roleObj.selectedPrivilegesOption" optionLabel="name" [required]="true"
+                  [ngClass]="{ 'is-invalid': roleForm.submitted && privileges_id.errors }"
+                  [style]="{'height':'30px', 'width':'100%'}" placeholder="Select Access Privilege" [showClear]="true">
+                </p-dropdown>
+                <div *ngIf="roleForm.submitted && privileges_id.errors" class="invalid-feedback">
+                  <div *ngIf="privileges_id.errors['required']">Please Select Privilege</div>
+                </div>
+              </div>
+
+            </div>
+            <div class="grid">
+              <div class="col-12 md:col-8 lg:col-8 flex flex-column gap-1">
+                <label>Description <span class="error">*</span></label>
+                <textarea type="text" class="title-inp" name="role_description" #role_description="ngModel"
+                  [(ngModel)]="roleObj.description" [style]="{'height':'140px'}" required
+                  [ngClass]="{ 'is-invalid': roleForm.submitted && role_description.errors }" rows="5" maxlength="500"
+                  pInputTextarea>
+                </textarea>
+                <div *ngIf="roleForm.submitted && role_description.errors" class="invalid-feedback">
+                  <div *ngIf="role_description.errors['required']"> Please enter Description.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+              <label>Status</label>
+              <div class="rowContainer">
+                <p-inputSwitch name="is_active" #activeStatus="ngModel" [(ngModel)]="roleObj.is_active"
+                  (onChange)="activeStatusChange(roleObj?.is_active)">
+                </p-inputSwitch>
+                <span [ngClass]="{'status-text': true, 'active': roleObj?.is_active, 'inactive': !roleObj?.is_active}">
+                  {{ roleObj?.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ButtonWrap flex gap-2">
+            <p-button type="submit" label="Add" *ngIf="!roleObj?.id"
+              (click)="createRole(roleForm,'add',roleObj)"></p-button>
+            <p-button type="submit" label="Update" *ngIf="roleObj?.id"
+              (click)="createRole(roleForm,'update',roleObj)"></p-button>
+
+            <p-button label="Reset" *ngIf="!roleObj?.id" (click)="resetForm(roleForm)"
+              styleClass="p-button-secondary"></p-button>
+
+            <p-button label="Cancel" (click)="cancelForm()" styleClass="p-button-secondary "></p-button>
+
+          </div>
+        </form>
+
+      </div>
+
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+
+</div>
+
+
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>

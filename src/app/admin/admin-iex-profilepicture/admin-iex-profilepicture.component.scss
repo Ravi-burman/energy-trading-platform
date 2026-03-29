@@ -1,0 +1,47 @@
+// Full Graph for Greenko User Dashboard
+
+.PageTitle {
+    text-align: center;
+  }
+  
+  // --------------------- Responisve Style -----------------
+  
+  ::ng-deep .p-card .p-card-content {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+  }
+  
+  
+  
+  .tab-content {
+    padding-top: 0px;
+    min-height: 460px;
+   
+  }
+  .tab-container {
+    display: flex;
+    border-bottom: #dee2e6 2px solid;
+    margin-bottom: 8px;
+    margin-top: -9px;
+    justify-content: center !important;
+  }
+  
+  .tab {
+    cursor: pointer;
+    font-weight:600;
+    padding: 16px;
+    margin-right: 2px;
+    margin-bottom: -2px;
+    border-radius: 5px 5px 0 0;
+    user-select: none;
+    width: 100%;
+    display: flex;
+    justify-content: center !important;
+  }
+ 
+  #container {
+    height: 460px !important;
+  }
+
+

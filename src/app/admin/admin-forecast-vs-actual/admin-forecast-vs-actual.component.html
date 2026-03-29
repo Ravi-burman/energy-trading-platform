@@ -1,0 +1,110 @@
+<ngx-loading [show]="getDataLoading"></ngx-loading>
+<!-- <p-toast position="top-right"></p-toast> -->
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <section id="pageContent">
+    <div class="pageContent-container custom-section">
+      <div class="PageTitle align-items-center justify-content-between">
+        <div class="grid">
+          <div class="col-12 md:col-12 lg:col-4">
+            <span class="pageName">Forecast vs Actual</span>
+          </div>
+          <div class="col-12 md:col-12 lg:col-8 text-right">
+            <div  class="dropdown-text">
+              <p-dropdown [options]="graphMetricsOptions" [(ngModel)]="selectedOption" optionLabel="name"
+              (onChange)="onPriceVolumeOptionChange()" placeholder="Select an option">
+            </p-dropdown>
+              <p-dropdown [options]="metricsOptions" [(ngModel)]="selectedMetric" optionLabel="name" 
+                (onChange)="onPriceVolumeOptionChange()" placeholder="Select an option">
+              </p-dropdown>
+              <p-dropdown [options]="dateRanges" [(ngModel)]="selectRange" optionLabel="name"
+              (onChange)="onPriceVolumeOptionChange()" placeholder="Select an option">
+            </p-dropdown>
+              <mat-form-field appearance="outline" style="margin-left: 0.5rem;" *ngIf=" selectRange.value === 'customRange'">
+                <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                  [formGroup]="dateRange">
+                  <input matStartDate formControlName="FromDate">
+                  <input matEndDate formControlName="ToDate" (dateChange)="onDateRangeChange()">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+              </mat-form-field>
+            </div>
+          </div>
+          <!-- <div *ngIf="dateRange.get('ToDate').hasError('required')" class="col-12 md:col-12 lg:col-10 text-right"
+            style="margin-left:-46px; padding-top: 0px;">
+            <mat-error>
+              Please select To Date
+            </mat-error>
+          </div> -->
+        </div>
+      </div>
+      <p-card>
+        <div *ngIf="selectedOption.value === 'graph_and_metrics' || selectedOption.value === 'graph'" class="graphWrap">
+          <plotly-plot *ngIf="selectedOption.value !== 'metrics'" [data]="foreCastGraphData.foreCastData"
+            [layout]="foreCastGraphData.layout" [config]="foreCastGraphData.config">
+          </plotly-plot>
+        </div>
+
+        <div class="tab-container" *ngIf="selectedOption.value!='graph'">
+          <div class="tab">Forecast Performance Metrics</div>
+        </div>
+          <div class="tableView"
+            *ngIf="(selectedOption.value === 'graph_and_metrics' || selectedOption.value === 'metrics') ">
+            <p-table [value]="mergedGraphMetricsData" [rowHover]="true" [tableStyle]="{ 'min-width': '50rem' }">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>DATE</th>
+                  <th>CATEGORY</th>
+                  <th>RMSE</th>
+                  <th>RMSEP</th>
+                  <th>MAE</th>
+                  <th>MAPE</th>
+                  <th>MBE</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-graphMetricsMetricData let-i="rowIndex">
+                  <tr *ngIf="i%rowSpan===0"
+                    [ngClass]="{'sun-text' :(graphMetricsMetricData?.FORECAST_START_TIME |date:'EEE')==='Sun', 'sat-text': (graphMetricsMetricData?.FORECAST_START_TIME |date:'EEE')==='Sat' }">
+                    <td [attr.rowspan]="rowSpan+1" style="width: 170px;">
+                      <div class="circle1"
+                        [style.background-color]="getDayColor(graphMetricsMetricData.FORECAST_START_TIME | date:'EEE')">
+                        {{graphMetricsMetricData.FORECAST_START_TIME | date:'EEE'}}
+                      </div>
+                      {{graphMetricsMetricData.FORECAST_START_TIME | date:'dd-MMM-YYYY'}}
+                    </td>
+                  </tr>
+                <tr [ngClass]="{'sun-text' :(graphMetricsMetricData?.FORECAST_START_TIME |date:'EEE')==='Sun', 'sat-text': (graphMetricsMetricData?.FORECAST_START_TIME |date:'EEE')==='Sat' }">
+
+                  <td>{{graphMetricsMetricData?.category}}</td>
+                  <td
+                    [ngClass]="{'red-text': graphMetricsMetricData?.RMSE > 1600, 'green-text': graphMetricsMetricData?.RMSE <= 1600}">
+                    {{ graphMetricsMetricData?.RMSE}}
+                  </td>
+                  <td
+                    [ngClass]="{'red-text': graphMetricsMetricData?.RMSEP > 25, 'green-text': graphMetricsMetricData?.RMSEP <= 25}">
+                    {{ graphMetricsMetricData?.RMSEP }}
+                  </td>
+                  <td
+                    [ngClass]="{'red-text': graphMetricsMetricData?.MAE > 1200, 'green-text': graphMetricsMetricData?.MAE <= 1200}">
+                    {{ graphMetricsMetricData?.MAE }}
+                  </td>
+                  <td
+                    [ngClass]="{'red-text': graphMetricsMetricData?.MAPE > 18, 'green-text': graphMetricsMetricData?.MAPE <= 18}">
+                    {{ graphMetricsMetricData?.MAPE }}
+                  </td>
+                  <td [ngClass]="{
+                    'red-text': graphMetricsMetricData?.MBE > 600 || graphMetricsMetricData?.MBE < -600,
+                    'green-text': graphMetricsMetricData?.MBE <= 600 && graphMetricsMetricData?.MBE >= -600
+                  }">
+                    {{ graphMetricsMetricData?.MBE }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+      </p-card>
+    </div>
+  </section>
+</div>

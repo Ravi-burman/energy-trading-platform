@@ -1,0 +1,117 @@
+<ngx-loading [show]="getCountryLoading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <section id="pageContent">
+    <div class="pageContent-container" *ngIf="listViewSection">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Country</span>
+      </div>
+      <div class="PageContent">
+        <p-table #countrydt [sortField]="defaultSortField" [sortOrder]="defaultSortOrder" [value]="filteredCountry"
+          [paginator]="true" [rowHover]="true" [(first)]="paginatorOptions.first" [rows]="paginatorOptions.rows"
+          [loading]="loading" [showCurrentPageReport]="true"
+          [tableStyle]="{ 'min-width': '50rem', 'font-size': '15px' }"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Countries"
+          [rowsPerPageOptions]="paginatorOptions.rowsPerPageOptions" [globalFilterFields]="['name']"
+          (onPage)="onPageChange($event)">
+          <ng-template pTemplate="caption">
+            <div class="searchOptions m-1">
+              <div class="column">
+                <p-dropdown [options]="options" [(ngModel)]="selectedOption" optionLabel="name">
+                </p-dropdown>
+              </div>
+              <div class="column">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText name="search" #search="ngModel" [(ngModel)]="searchValue" type="text"
+                    (input)="countrydt.filterGlobal(search.value, 'contains')" placeholder="Search" />
+                </span>
+              </div>
+              <button style="margin-left: 10px;" pButton class="p-button-outlined" icon="pi pi-refresh"
+                (click)="clear(countrydt)" pTooltip="Reset" tooltipPosition="left">
+              </button>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name"> Country Name <p-sortIcon field="name"></p-sortIcon></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-country>
+            <tr>
+              <td>{{ country?.name | uppercase }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-country>
+            <tr>
+              <td colspan="7" style="text-align:center;padding: 1.2rem 1rem;">
+                No Country Data Available
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+
+
+    <div *ngIf="addCountrySection" class="pageContent-container">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName" *ngIf="!countryObj?.id">Add Country </span>
+        <span class="pageName" *ngIf="countryObj?.id">Edit Country</span>
+      </div>
+      <div class="PageContent flex flex-column gap-4">
+        <form class="useraddform" novalidate #countryForm="ngForm">
+          <div class=" flex flex-column gap-1">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Country Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="name" #name="ngModel" [(ngModel)]="countryObj.name"
+                  [style]="{'height':'30px'}" required
+                  [ngClass]="{ 'is-invalid': countryForm.submitted && name.errors }" placeholder="" pInputText
+                  maxlength="50" />
+                <div *ngIf="countryForm.submitted && name.errors" class="invalid-feedback">
+                  <div *ngIf="name.errors['required']">Please Enter Country Name.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+              <label>Status</label>
+              <div class="rowContainer">
+                <p-inputSwitch name="is_active" #activeStatus="ngModel" [(ngModel)]="countryObj.is_active"
+                  (onChange)="activeStatusChange(countryObj?.is_active)"></p-inputSwitch>
+                <span
+                  [ngClass]="{'status-text': true, 'active': countryObj?.is_active, 'inactive': !countryObj?.is_active}">
+                  {{ countryObj?.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ButtonWrap flex gap-2">
+            <p-button type="submit" label="Add" *ngIf="!countryObj?.id"
+              (click)="createCountry(countryForm,'add',countryObj)"></p-button>
+            <p-button type="submit" label="Update" *ngIf="countryObj?.id"
+              (click)="createCountry(countryForm,'update',countryObj)"></p-button>
+
+            <p-button label="Reset" *ngIf="!countryObj?.id" (click)="resetForm(countryForm)"
+              styleClass="p-button-secondary">
+            </p-button>
+            <p-button label="Cancel" (click)="cancelForm()" styleClass="p-button-secondary ">
+            </p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+</div>
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>

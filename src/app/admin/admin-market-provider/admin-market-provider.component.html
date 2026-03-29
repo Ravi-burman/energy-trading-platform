@@ -1,0 +1,154 @@
+<ngx-loading [show]="getMktProvidersLoading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <!-- body contents -->
+  <section id="pageContent">
+    <div class="pageContent-container" *ngIf="listViewSection">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Market Providers</span>
+      </div>
+      <div class="PageContent">
+        <p-table #mktProviderdt [sortField]="defaultSortField" [sortOrder]="defaultSortOrder"
+          [value]="filteredMktProvider" [paginator]="true" [rowHover]="true" [(first)]="paginatorOptions.first"
+          [rows]="paginatorOptions.rows" [loading]="loading" [showCurrentPageReport]="true"
+          [tableStyle]="{ 'min-width': '50rem', 'font-size': '15px' }"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Providers"
+          [rowsPerPageOptions]="paginatorOptions.rowsPerPageOptions" [globalFilterFields]="['name']"
+          (onPage)="onPageChange($event)">
+          <ng-template pTemplate="caption">
+            <div class="searchOptions m-1">
+
+              <div class="column">
+                <p-dropdown [options]="options" (onChange)="changeDropdown()" [(ngModel)]="selectedOption"
+                  optionLabel="name"></p-dropdown>
+              </div>
+
+              <div class="column">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText name="search" [ngModel]="searchValue" (ngModelChange)="search($event)" type="text"
+                    placeholder="Search" />
+                </span>
+              </div>
+              <button style="margin-left: 10px;" pButton class="p-button-outlined" icon="pi pi-refresh"
+                (click)="clear(mktProviderdt)" pTooltip="Reset" tooltipPosition="left">
+              </button>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name"> Provider Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="country_name">Country <p-sortIcon field="country_name"></p-sortIcon></th>
+              <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-mktProvider>
+            <tr>
+              <td>{{ mktProvider?.name | uppercase }}</td>
+              <td>{{ mktProvider?.country_name }}</td>
+              <td>
+                <span *ngIf="mktProvider?.description.length > 50" [pTooltip]="mktProvider?.description"
+                  tooltipPosition="top">
+                  {{ mktProvider?.description | slice: 0:50 }}...
+                </span>
+                <span *ngIf="mktProvider?.description.length <= 50">{{ mktProvider?.description }}</span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-mktProvider>
+            <tr>
+              <td colspan="7" style="text-align:center;padding: 1.2rem 1rem;">
+                No Market Providers Data Available
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <div *ngIf="addMktProviderSection" class="pageContent-container">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName" *ngIf="!mktObj?.id">Add Market Provider</span>
+        <span class="pageName" *ngIf="mktObj?.id">Edit Market Provider</span>
+      </div>
+      <div class="PageContent flex flex-column gap-4">
+        <form class="useraddform" novalidate #mktProviderform="ngForm">
+          <div class=" flex flex-column gap-1">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Market Provider Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="name" #name="ngModel" [(ngModel)]="mktObj.name"
+                  [style]="{'height':'30px'}" required
+                  [ngClass]="{ 'is-invalid': mktProviderform.submitted && name.errors }" placeholder="" pInputText
+                  maxlength="50" />
+                <div *ngIf="mktProviderform.submitted && name.errors" class="invalid-feedback">
+                  <div *ngIf="name.errors['required']">Please enter Name.</div>
+                </div>
+              </div>
+
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Country Name <span class="error">*</span></label>
+                <p-dropdown [options]="countriesList" name="country" #country="ngModel" [required]="true"
+                  [(ngModel)]="mktObj.selectedCountry" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': mktProviderform.submitted && country.errors }" optionLabel="name"
+                  placeholder="Select the Country">
+                </p-dropdown>
+
+                <div *ngIf="mktProviderform.submitted && country.errors" class="invalid-feedback">
+                  <div *ngIf="country.errors['required']">Please select Country.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="col-12 md:col-8 lg:col-8 flex flex-column gap-1">
+                <label>Description <span class="error">*</span></label>
+                <textarea type="text" class="title-inp" name="description" #description="ngModel"
+                  [(ngModel)]="mktObj.description" [style]="{'height':'140px'}" required
+                  [ngClass]="{ 'is-invalid': mktProviderform.submitted && description.errors }" rows="5" maxlength="250"
+                  pInputTextarea>
+                </textarea>
+                <div *ngIf="mktProviderform.submitted && description.errors" class="invalid-feedback">
+                  <div *ngIf="description.errors['required']"> Please enter Description.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+              <label>Status</label>
+              <div class="rowContainer">
+                <p-inputSwitch name="is_active" #activeStatus="ngModel" [(ngModel)]="mktObj.is_active"
+                  (onChange)="activeStatusChange(mktObj?.is_active)"></p-inputSwitch>
+                <span [ngClass]="{'status-text': true, 'active': mktObj?.is_active, 'inactive': !mktObj?.is_active}">
+                  {{ mktObj?.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ButtonWrap flex gap-2">
+            <p-button type="submit" label="Add" *ngIf="!mktObj?.id"
+              (click)="create_or_update_MarketProvider(mktProviderform,'add',mktObj)"></p-button>
+            <p-button type="submit" label="Update" *ngIf="mktObj?.id"
+              (click)="create_or_update_MarketProvider(mktProviderform,'update',mktObj)"></p-button>
+
+            <p-button label="Reset" *ngIf="!mktObj?.id" (click)="resetForm(mktProviderform)"
+              styleClass="p-button-secondary">
+            </p-button>
+            <p-button label="Cancel" (click)="cancelForm()"
+              styleClass="p-button-secondary p-button-outlined">
+            </p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+</div>
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>

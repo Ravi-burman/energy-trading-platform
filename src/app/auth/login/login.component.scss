@@ -1,0 +1,133 @@
+body {
+  background-color: #D5E9F1 !important;
+}
+
+.signin-wrapper {
+  position: relative;
+  display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  /*height: calc(100vh - 36px);*/
+  height: 100vh;
+  background-color: #D5E9F1;
+  // background-image: url("/src/assets/images/ggpattern.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: auto;
+}
+
+.signin-wrapper form {
+  padding: 0px;
+  width: 100%;
+}
+.signInWrap {
+  width: 420px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.signInWrap .signInWrap-container {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 1px -1px, rgba(0, 0, 0, 0.14) 0px 1px 1px 0px, rgba(0, 0, 0, 0.12) 0px 1px 3px 0px;
+  border-radius: 4px;
+  padding: 36px 36px 48px 36px;
+  text-align: center;
+}
+
+.signInWrap label {
+  text-align: left;
+}
+
+.signInWrap .instruction {
+  text-align: left;
+  display: block;
+  color: #64748B;
+}
+
+.signInWrap .logo-appName {
+  margin: -5px auto 16px auto;
+  height: 45px;
+}
+
+.signInWrap h4 {
+  font-size: 22px;
+  color: #1E293B;
+  font-weight: 400;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.signInWrap .p-password {
+  display: block !important;
+  width: 100% !important;
+}
+
+.signInWrap .p-inputtext {
+  width: 100% !important;
+}
+.signInWrap .p-element {
+  display: block !important;
+}
+.signInWrap form {
+  text-align: left;
+}
+.password-input {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.input-with-icon {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.password-toggle-icon {
+  position: absolute;
+  right: 10px; 
+  top: 50%; 
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+
+#footer {
+  color: #64748B !important;
+  /*display: block;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.75) !important;*/
+}
+
+@media screen and (max-width: 960px) {
+  .signInWrap {
+    width: 400px;
+  }
+
+  .signInWrap h4 {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .signInWrap {
+    width: 100%;
+    box-shadow: none;
+    padding: 0px;
+    border-radius: initial;
+  }
+  .signInWrap .signInWrap-container {
+    padding: 36px 24px 48px 24px;
+  }
+
+  .signInWrap .logo-appName {
+    height: 45px;
+  }
+
+  .signInWrap h4 {
+    font-size: 19px;
+  }
+}
+

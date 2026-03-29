@@ -1,0 +1,52 @@
+<!-- <ngx-loading [show]="getDataLoading"></ngx-loading> -->
+<div class="db-wrapper">
+    <app-header></app-header>
+    <section id="pageContent">
+        <div class="pageContent-container custom-section">
+            <div class="PageTitle align-items-center justify-content-between">
+                <p-card>
+                    <div class="tab-container">
+                        <div class="col-12 md:col-12 lg:col-4 text-left">
+                        <div style="display: inline-block;" class="mr-1">
+                            <p-dropdown [options]="selectMarketOptions" (onChange)="onDeliveryMarketChange()"
+                                [(ngModel)]="marketOption" placeholder="Select an option" optionLabel="name">
+                            </p-dropdown>
+                            </div>
+                            <div style="display: inline-block;" class="mr-2">
+                            <p-dropdown [options]="profiledayOptions" [(ngModel)]="selectedOption" optionLabel="name"
+                                (onChange)="onProfileOptionChange()" placeholder="Select an option">
+                            </p-dropdown>
+                            </div>
+                        </div>
+                            <div >
+                                <!-- <div>IEX Profile Picture</div> -->
+                            </div> 
+                        <div class="col-12 md:col-12 lg:col-8 text-right">
+                            <div style="display: inline-block;" class="mr-1">
+                                <p-dropdown [options]="deliveryAreaOptions" (onChange)="onDeliveryAreaChange()"
+                                    [(ngModel)]="selectedDeliveryArea">
+                                </p-dropdown>
+                                </div>
+                                <div style="display: inline-block;" class="mr-1">
+                                <p-dropdown [options]="deliveryCodeOptions" (onChange)="onDeliveryCodeChange()"
+                                    [(ngModel)]="selectedDeliveryCode">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                      
+                    </div>
+                    <div class="graphArea" class="tab-content">
+                        
+                        <div class="graphArea" class="tab-content">
+                            <div id="container"></div>
+
+                        </div>
+                    </div>
+                </p-card>
+
+            </div>
+        </div>
+    </section>
+
+
+</div>

@@ -1,0 +1,154 @@
+<ngx-loading [show]="getRldcLoading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <!-- body contents -->
+  <section id="pageContent">
+    <div class="pageContent-container" *ngIf="listViewSection">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName"> RLDCs</span>
+      </div>
+      <div class="PageContent">
+        <p-table #rldcsdt [sortField]="defaultSortField" [sortOrder]="defaultSortOrder" [value]="filteredRldcs"
+          [paginator]="true" [rowHover]="true" [(first)]="paginatorOptions.first" [rows]="paginatorOptions.rows"
+          [loading]="loading" [showCurrentPageReport]="true"
+          [tableStyle]="{ 'min-width': '50rem', 'font-size': '15px' }"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} RLDCs"
+          [rowsPerPageOptions]="paginatorOptions.rowsPerPageOptions" [globalFilterFields]="['name']"
+          (onPage)="onPageChange($event)">
+
+          <ng-template pTemplate="caption">
+            <div class="searchOptions m-1">
+              <div class="column">
+                <p-dropdown [options]="options" (onChange)="changeDropdown()" [(ngModel)]="selectedOption"
+                  optionLabel="name"></p-dropdown>
+              </div>
+
+              <div class="column">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText name="search" [ngModel]="searchValue" (ngModelChange)="search($event)" type="text" placeholder="Search"/>
+                </span>
+              </div>
+
+              <button style="margin-left: 10px;" pButton class="p-button-outlined" icon="pi pi-refresh"
+                (click)="clear(rldcsdt)" pTooltip="Reset" tooltipPosition="left"></button>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name"> RLDC Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="country_name">Country <p-sortIcon field="country_name"></p-sortIcon></th>
+              <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rldc>
+            <tr>
+              <td>{{ rldc?.name | uppercase }}</td>
+              <td>{{ rldc?.country_name}}</td>
+              <td>
+                <span *ngIf="rldc?.description.length > 50" [pTooltip]="rldc?.description" tooltipPosition="top">
+                  {{ rldc?.description | slice: 0:50 }}...
+                </span>
+                <span *ngIf="rldc?.description.length <= 50">{{ rldc?.description }}</span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-rldc>
+            <tr>
+              <td colspan="7" style="text-align:center;padding: 1.2rem 1rem;">
+                No RLDCs Data Available
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+
+
+    <div *ngIf="addRldcSection" class="pageContent-container">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName" *ngIf="!rldcObj?.id">Add RLDC</span>
+        <span class="pageName" *ngIf="rldcObj?.id">Edit RLDC</span>
+      </div>
+      <div class="PageContent flex flex-column gap-4">
+        <form class="useraddform" novalidate #rldcsdtForm="ngForm">
+          <div class=" flex flex-column gap-1">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>RLDCs Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="name" #name="ngModel" [(ngModel)]="rldcObj.name"
+                  [style]="{'height':'30px'}" required [ngClass]="{ 'is-invalid': rldcsdtForm.submitted && name.errors }"
+                  placeholder="" pInputText maxlength="50" />
+                <div *ngIf="rldcsdtForm.submitted && name.errors" class="invalid-feedback">
+                  <div *ngIf="name.errors['required']">Please enter rldc name.</div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Country <span class="error">*</span></label>
+                <p-dropdown [options]="countriesList" name="selectedCountry" #selectedCountry="ngModel" [required]="true"
+                  [(ngModel)]="rldcObj.selectedCountry" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': rldcsdtForm.submitted && selectedCountry.errors }" optionLabel="name"
+                  placeholder="Select the Country">
+                </p-dropdown>
+
+                <div *ngIf="rldcsdtForm.submitted && selectedCountry.errors" class="invalid-feedback">
+                  <div *ngIf="selectedCountry.errors['required']">Please select country.</div>
+                </div>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col-12 md:col-8 lg:col-8 flex flex-column gap-1">
+                <label>Description <span class="error">*</span></label>
+                <textarea type="text" class="title-inp" name="description" #description="ngModel"
+                  [(ngModel)]="rldcObj.description" [style]="{'height':'140px'}" required
+                  [ngClass]="{ 'is-invalid': rldcsdtForm.submitted && description.errors }" rows="5" maxlength="250"
+                  pInputTextarea>
+                </textarea>
+                <div *ngIf="rldcsdtForm.submitted && description.errors" class="invalid-feedback">
+                  <div *ngIf="description.errors['required']"> Please enter description.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+              <label>Status</label>
+              <div class="rowContainer">
+                <p-inputSwitch name="is_active" #activeStatus="ngModel" [(ngModel)]="rldcObj.is_active"
+                  (onChange)="activeStatusChange(rldcObj?.is_active)"></p-inputSwitch>
+                <span [ngClass]="{'status-text': true, 'active': rldcObj?.is_active, 'inactive': !rldcObj?.is_active}">
+                  {{ rldcObj?.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ButtonWrap flex gap-2">
+            <p-button type="submit" label="Add" *ngIf="!rldcObj?.id"
+              (click)="create_or_update_rldc(rldcsdtForm,'add',rldcObj)"></p-button>
+            <p-button type="submit" label="Update" *ngIf="rldcObj?.id"
+              (click)="create_or_update_rldc(rldcsdtForm,'update',rldcObj)">
+            </p-button>
+            <p-button label="Reset" *ngIf="!rldcObj?.id" (click)="resetForm(rldcsdtForm)" styleClass="p-button-secondary">
+            </p-button>
+            <p-button label="Cancel" (click)="cancelForm()"
+              styleClass="p-button-secondary p-button-outlined"></p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+</div>
+
+
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

@@ -1,0 +1,54 @@
+<!-- <p-toast position="top-right" (onClose)="onToastClose()"></p-toast> -->
+<p-toast position="top-right"></p-toast>
+<div class="db-wrapper">
+
+  <div class="signin-wrapper">
+
+    <!-- SIGN IN -->
+    <div class="signInWrap flex flex-column gap-4">
+      <div class="signInWrap-container">
+        <img class="logo-appName" src="assets/images/logo.svg" alt="">
+        <h4>Login to your account</h4><br>
+
+        <form novalidate #f="ngForm" (ngSubmit)="login(f)">
+          <div class="flex flex-column gap-3">
+            <div class="flex flex-column gap-1">
+              <label htmlFor="email_address"> Email ID<span class="error">*</span> </label>
+              <input pInputText type="text" autocomplete="off"
+                class="ui-inputtext ui-corner-all ui-state-default ui-widget"
+                pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,9}$" placeholder="Email ID" name="email_address"
+                [(ngModel)]="data.email_address" [required]="true" #email_address="ngModel" />
+              <div class="error" *ngIf="(email_address.errors && email_address.touched || f.submitted)">
+                <span *ngIf="email_address.errors?.required">
+                  Please enter Email ID.
+                </span>
+                <span *ngIf="email_address.errors?.pattern">
+                  Please enter valid Email ID.
+                </span>
+              </div>
+            </div>
+            <div class="flex flex-column gap-1">
+              <label htmlFor="password">Password<span class="error">*</span></label>
+              <div class="input-with-icon">
+                <input [type]="showPassword ? 'text' : 'password'" pInputText autocomplete="off"
+                  [(ngModel)]="data.password" name="password" [required]="true" #password="ngModel"
+                  class="ui-inputtext ui-corner-all ui-state-default ui-widget" placeholder="Password" />
+                <span class="password-toggle-icon" (click)="togglePasswordVisibility()">
+                  <i [class]="showPassword ? 'fa fa-eye' : 'fa fa-eye-slash' "></i>
+                </span>
+              </div>
+              <div class="error" *ngIf="(password.errors && password.touched) || f.submitted">
+                <span *ngIf="password.errors?.required">Please enter Password.</span>
+              </div>
+            </div>
+          </div>
+
+          <BR>
+          <p-button label="LogIn" type="submit" [style]="{width: '100%'}"></p-button>
+        </form>
+      </div>
+      <section id="footer">© Greenko Group. All rights reserved.</section>
+    </div>
+
+  </div>
+</div>

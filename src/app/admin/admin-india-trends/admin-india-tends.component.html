@@ -1,0 +1,137 @@
+<ngx-loading [show]="getDataLoading"></ngx-loading>
+<!-- <p-toast position="top-right"></p-toast> -->
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <section id="pageContent">
+    <div class="pageContent-container">
+      <!-- <div class="PageTitle flex align-items-center justify-content-between">
+        <div>
+          <span class="pageName">India Trends</span>
+        </div>       
+      </div> -->
+      <p-card>
+        <div class="tab-container">
+          <div class="tab" (click)="selectTab('istsDemand')" [class.active]="selectedTab === 'istsDemand'">ISTS Demand
+          </div>
+          <div class="tab" (click)="selectTab('gasPrice')" [class.active]="selectedTab === 'gasPrice'">Gas Prices
+          </div>
+          <div class="tab" (click)="selectTab('installedCapacity')"
+            [class.active]="selectedTab === 'installedCapacity'">Installed Capacity
+          </div>
+          <div class="tab" (click)="selectTab('generators')" [class.active]="selectedTab === 'generators'">Generators
+          </div>
+        </div>
+        <div class="col-6 md:col-12 lg:col-2 mapContainer" *ngIf="selectedTab === 'istsDemand'">
+          <div class="mapElement mr-2">
+            <mat-form-field appearance="outline">
+              <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                [formGroup]="dateRange">
+                <input matStartDate formControlName="FromDate">
+                <input matEndDate formControlName="ToDate" (dateChange)="onDateRangeChange()">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+            <div class="col-12 error-msg" *ngIf="dateRange.get('ToDate').hasError('required')"
+              style="margin-left: -100px;">
+              <mat-error *ngIf="dateRange.get('ToDate').hasError('required')">
+                Please Select To Date
+              </mat-error>
+            </div>
+            <div class="boxes" *ngIf="isIstsGraphVisible===true">
+              <span style="display:block; padding-bottom:6px; font-weight:600;">ISTS DEMAND</span>
+              <div class="box-with-label">
+                <div class="box box1"></div>
+                <span>90-100</span>
+              </div>
+
+              <div class="box-with-label">
+                <div class="box box2"></div>
+                <span>75-90</span>
+              </div>
+              <div class="box-with-label">
+                <div class="box box3"></div>
+                <span>25-75</span>
+              </div>
+              <div class="box-with-label">
+                <div class="box box4"></div>
+                <span>0-25</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div *ngIf="selectedTab === 'istsDemand'" class="graphArea" class="tab-content tab-india">
+          <plotly-plot [data]="plotData" [layout]="plotLayout" [frames]="frames" [updateOnDataChange]="false"
+            [config]="config"></plotly-plot>
+        </div>
+        <div class="col-6 md:col-12 lg:col-2  mapContainer" *ngIf="selectedTab === 'gasPrice'">
+          <div class="mapElement mr-2">
+            <mat-form-field appearance="outline">
+              <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                [formGroup]="igxDateRange">
+                <input matStartDate formControlName="FromDate">
+                <input matEndDate formControlName="ToDate" (dateChange)="igxDateRangeChange()">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+            <div class="col-12 error-msg" *ngIf="igxDateRange.get('ToDate').hasError('required')"
+              style="margin-left: -100px;">
+              <mat-error *ngIf="igxDateRange.get('ToDate').hasError('required')">
+                Please Select To Date
+              </mat-error>
+            </div>
+            <div class="boxes">
+              <span style="display:block; padding-bottom:6px; font-weight:600;">IGX GAS</span>
+              <div class="box-with-label">
+                <div class="box box1"></div>
+                <span>90-100</span>
+              </div>
+
+              <div class="box-with-label">
+                <div class="box box2"></div>
+                <span>75-90</span>
+              </div>
+              <div class="box-with-label">
+                <div class="box box3"></div>
+                <span>25-75</span>
+              </div>
+              <div class="box-with-label">
+                <div class="box box4"></div>
+                <span>0-25</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="selectedTab === 'gasPrice'" class="graphArea" class="tab-content tab-india">
+          <plotly-plot [data]="igxPlotData" [layout]="igxLayout" [frames]="igxFrames" [updateOnDataChange]="false"
+            [config]="config"></plotly-plot>
+        </div>
+        <div *ngIf="selectedTab === 'installedCapacity'" class="graphArea2 tab-content">
+          <div class="plot-container">
+            <plotly-plot id="stateColour" [data]="installedCapacityPlotData" [layout]="capacityLayout"
+              (plotlyClick)="getStateData($event)" [config]="config"></plotly-plot>
+          </div>
+          <div id="pi-container" style="margin-top: 100px;">
+            <!-- <plotly-plot [data]="chartData" [layout]="chartLayout" *ngIf="this.isSecondGraphVisible ===true" [config]="config">
+        </plotly-plot> -->
+          </div>
+        </div>
+        <div *ngIf="selectedTab === 'generators'" class="col-12 md:col-12 lg:col-12  text-right">
+          <div style="display: inline-block;" class="mr-2">
+            <p-dropdown [options]="blockOptions" [(ngModel)]="blockSelection" optionLabel="name"
+              placeholder="Installed Capacity" (onChange)="onInstallCapacityChange()">
+            </p-dropdown>
+          </div>
+        </div>
+        <div *ngIf="selectedTab === 'generators'">
+          <plotly-plot [data]="generatorsPlotData" [layout]="generatorLayout" [config]="config">
+            <p><b>Note:</b> Data based on Generators registered with CEA. </p>
+          </plotly-plot>
+        </div>
+      </p-card>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,58 @@
+<!-- <p-button (click)="showDialog()" label="Show" />
+<p-dialog header="Edit Data" [modal]="true" [(visible)]="visible" class="container-popup">
+    <span class="p-text-secondary block mb-5">Update your information.</span>
+  
+    <div class="flex justify-content-end gap-2">
+        <p-button label="Cancel" severity="secondary" (click)="visible = false" />
+        <p-button label="Save" (click)="visible = false" />
+    </div>
+</p-dialog> -->
+<!-- <button mat-button (click)="openDialog()">Show</button> -->
+<section>
+    <!-- <div class="pageContent-container"> -->
+        <!-- <p-card> -->
+            <!-- <section> -->
+                <div class="col-12 md:col-12 lg:col-12 text-right">
+                    <div  class="dropdown-text">
+                      <p-dropdown [options]="irnsSelection" [(ngModel)]="selectRange" optionLabel="name"
+                      (onChange)="irnsDateRangeChange()" placeholder="Select an option">
+                    </p-dropdown>
+                      <mat-form-field appearance="outline" style="margin-left: 0.5rem;" >
+                        <mat-date-range-input class="btn btn-main-outline" [rangePicker]="picker"
+                          [formGroup]="dateRange">
+                          <input matStartDate formControlName="FromDate">
+                          <input matEndDate formControlName="ToDate" (dateChange)="onDateRangeChange()">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+            <div class="map-wrapper">
+                <div id="container" style="width: 50%; height: 600px; position: relative;">           
+                </div>
+                <div class="floating-panel">
+                    <ul>
+                        <li class="fonts"><span class="color-box" style="background-color: #FFB299;"></span> Western Region</li>
+                        <li class="fonts"><span class="color-box" style="background-color: #99FFB2;"></span> Northern Region</li>
+                        <li class="fonts"><span class="color-box" style="background-color: #B299FF;"></span> Southern Region</li>
+                        <li class="fonts"><span class="color-box" style="background-color: #FF99CC;"></span> Eastern Region</li>
+                        <li class="fonts"><span class="color-box" style="background-color: #99CCFF;"></span> North Eastern Region</li>
+                    </ul>
+                </div>
+              
+            </div>
+            <div>
+                <button (click)="startAnimation()">Start</button>
+                <button (click)="stopAnimation()">Stop</button>
+                <input type="range" min="0" max="95" [(ngModel)]="currentIndex" (change)="onSliderChange($event)">            </div>
+        <!-- </section> -->
+        <!-- </p-card> -->
+    <!-- </div> -->
+</section>
+
+
+
+
+
+

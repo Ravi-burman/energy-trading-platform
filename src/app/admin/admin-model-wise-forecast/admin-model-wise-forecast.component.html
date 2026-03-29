@@ -1,0 +1,222 @@
+<ngx-loading [show]="getDataLoading"></ngx-loading>
+<!-- <p-toast position="top-right"></p-toast> -->
+
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <section id="pageContent">
+    <div class="pageContent-container custom-section">
+      <p-card>
+        <div class="tab-container">
+          <div class="tab" (click)="selectTab('damForecast')" [class.active]="selectedTab === 'damForecast'">DAM
+            Forecast Model Wise
+          </div>
+          <div class="tab" (click)="selectTab('gdamForecast')" [class.active]="selectedTab === 'gdamForecast'">
+            GDAM Forecast Model Wise
+          </div>
+          <div class="tab" (click)="selectTab('rtmForecast')" [class.active]="selectedTab === 'rtmForecast'">
+            RTM Forecast Model Wise
+          </div>
+
+        </div>
+        <!-- <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Forecast Model Wise</span>
+      </div> -->
+        <div class="PageTitle align-items-center justify-content-between">
+          <div class="grid" *ngIf="selectedTab === 'damForecast'">
+            <div class="col-12 md:col-12 lg:col-8">
+            </div>
+            <div class="col-12 md:col-12 lg:col-4 text-right" >
+              <div style="display: inline-block;" class="mr-2" >
+                <mat-form-field appearance="outline">
+                  <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                    [formGroup]="damDateRange">
+                    <input matStartDate formControlName="CurrentDate">
+                    <input matEndDate formControlName="StartDate" (dateChange)="onDateRangeChange()">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+              <p-dropdown [options]="damSelectOptions" [(ngModel)]="damOptions" optionLabel="name"
+                (onChange)="onDamModelwiseOptionChange()" placeholder="Select an option">
+              </p-dropdown>
+            </div>
+            <div class="col-12 md:col-12 lg:col-10 text-right" style="margin-left: -46px;" *ngIf="selectedTab === 'damForecast'">
+              <mat-error *ngIf="damDateRange.get('StartDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+        <div *ngIf="selectedTab === 'damForecast' && (damOptions.value === 'graph_and_metrics' || damOptions.value === 'graph')" class="graphWrap">
+          <plotly-plot *ngIf="damOptions.value !== 'metrics'" [data]="modelwiseGraphData.modelwiseData"
+            [layout]="modelwiseGraphData.layout" [config]="modelwiseGraphData.config"></plotly-plot>
+        </div>
+        <div class="pageContent-container tableView" style="padding:0px"
+          *ngIf=" selectedTab === 'damForecast' && (damOptions.value === 'graph_and_metrics' || damOptions.value === 'metrics')">
+          <div class="table-wrapper">
+            <p-table [scrollable]="true" [rowHover]="true" [value]="graphMetricsMetricData" scrollHeight="330px"
+              styleClass="mt-3">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pFrozenColumn class="table">Date</th>
+                  <th>Metric</th>
+                  <th *ngFor="let column of columns">{{ column }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                <ng-container *ngIf="i % 5 === 0; else continueRow">
+                  <tr
+                    [ngClass]="{'sun-text' :(rowData?.Date |date:'EEE')==='Sun', 'sat-text': (rowData?.Date |date:'EEE')==='Sat' }">
+                    <td pFrozenColumn [attr.rowspan]="5" class="frozen-column">
+                      <div class="circle" [style.background-color]="getDayColor(rowData.Date | date:'EEE')">
+                        {{rowData.Date | date:'EEE'}}
+                      </div>
+                      <div class="smallFont">{{rowData.Date | date:'dd MMM YYYY'}}</div>
+                    </td>
+                    <td>{{rowData.Metric}}</td>
+                    <td *ngFor="let column of columns" [style.color]="getColor(rowData.Metric,rowData[column])">{{
+                      rowData[column] }}</td>
+                  </tr>
+                </ng-container>
+                <ng-template #continueRow>
+                  <tr
+                    [ngClass]="{'sun-text' :(rowData?.Date |date:'EEE')==='Sun', 'sat-text': (rowData?.Date |date:'EEE')==='Sat' }">
+                    <td>{{rowData.Metric}}</td>
+                    <td *ngFor="let column of columns" [style.color]="getColor(rowData.Metric,rowData[column])">{{
+                      rowData[column] }}</td>
+                  </tr>
+                </ng-template>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        </div>
+        <div class="PageTitle align-items-center justify-content-between">
+          <div class="grid" *ngIf="selectedTab === 'gdamForecast'">
+            <div class="col-12 md:col-12 lg:col-8">
+            </div>
+            <div class="col-12 md:col-12 lg:col-4 text-right">
+              <div style="display: inline-block;" class="mr-2" >
+                <mat-form-field appearance="outline">
+                  <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                    [formGroup]="gdamDateRange">
+                    <input matStartDate formControlName="CurrentDate">
+                    <input matEndDate formControlName="StartDate" (dateChange)="onGdamRangeChange()">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+              <p-dropdown [options]="gdamSelectOptions" [(ngModel)]="gdamOptions" optionLabel="name"
+                (onChange)="onGdamModelwiseOptionChange()" placeholder="Select an option">
+              </p-dropdown>
+            </div>
+            <div class="col-12 md:col-12 lg:col-10 text-right" style="margin-left: -46px;" *ngIf="selectedTab === 'gdamForecast'">
+              <mat-error *ngIf="gdamDateRange.get('StartDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+        <div *ngIf="selectedTab === 'gdamForecast' && (gdamOptions.value === 'graph_and_metrics' || gdamOptions.value === 'graph')" class="graphWrap">
+          <plotly-plot [data]="gdamForeCastGraphData.gdamForeCastData"
+            [layout]="gdamForeCastGraphData.layout" [config]="gdamForeCastGraphData.config"></plotly-plot>
+        </div>
+        <div class="pageContent-container tableView" style="padding:0px"
+          *ngIf=" selectedTab === 'gdamForecast' && (gdamOptions.value === 'graph_and_metrics' || gdamOptions.value === 'metrics')">
+          <div class="table-wrapper">
+            <p-table [scrollable]="true" [rowHover]="true" [value]="gdamMetricsData" scrollHeight="330px"
+              styleClass="mt-3">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pFrozenColumn>Date</th>
+                  <th>Metric</th>
+                  <th *ngFor="let column of gdamColumns">{{ column }}</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-i="rowIndex">
+                <ng-container *ngIf="i % 5 === 0; else continueRow">
+                  <tr
+                    [ngClass]="{'sun-text' :(rowData?.DATE |date:'EEE')==='Sun', 'sat-text': (rowData?.DATE |date:'EEE')==='Sat' }">
+                    <td pFrozenColumn [attr.rowspan]="5" class="frozen-column">
+                      <div class="circle" [style.background-color]="getDayColor(rowData.DATE | date:'EEE')">
+                        {{rowData.DATE | date:'EEE'}}
+                      </div>
+                      <div class="smallFont">{{rowData.DATE | date:'dd MMM YYYY'}}</div>
+                    </td>
+                    <td>{{rowData.METRIC}}</td>
+                    <td *ngFor="let column of gdamColumns" [style.color]="getColor(rowData.METRIC,rowData[column])">{{
+                      rowData[column] }}</td>
+                  </tr>
+                </ng-container>
+                <ng-template #continueRow>
+                  <tr
+                    [ngClass]="{'sun-text' :(rowData?.DATE |date:'EEE')==='Sun', 'sat-text': (rowData?.DATE |date:'EEE')==='Sat' }">
+                    <td>{{rowData.METRIC}}</td>
+                    <td *ngFor="let column of gdamColumns" [style.color]="getColor(rowData.METRIC,rowData[column])">{{
+                      rowData[column] }}</td>
+                  </tr>
+                </ng-template>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+        </div>
+        <div class="PageTitle align-items-center justify-content-between">
+          <!-- <div class="grid"> -->
+          <div class="col-12 md:col-12 lg:col-12 text-right" *ngIf="selectedTab === 'rtmForecast'">
+            <div style="display: inline-block;" class="mr-2">
+              <p-dropdown [options]="blockOptions" [(ngModel)]="blockSelection" optionLabel="name"
+                (onChange)="onRtmBlocksChange()" placeholder="Select an option">
+              </p-dropdown>
+            </div>
+            <p-dropdown [options]="rtmSelectOptions" [(ngModel)]="rtmOptions" optionLabel="name"
+              (onChange)="onRtmOptionChange()" placeholder="Select an option">
+            </p-dropdown>
+          </div>
+          <!-- </div> -->
+        <!-- </div -->
+          <div *ngIf="selectedTab === 'rtmForecast' && (rtmOptions.value === 'graph_and_metrics' || rtmOptions.value === 'graph')" class="graphWrap">
+            <plotly-plot *ngIf="rtmOptions.value !== 'metrics'" [data]="rtmForeCastGraphData.rtmForeCastData"
+              [layout]="rtmForeCastGraphData.layout" [config]="rtmForeCastGraphData.config"></plotly-plot>
+          </div>
+          <div class="tableView"
+            *ngIf="selectedTab === 'rtmForecast' && (rtmOptions.value === 'graph_and_metrics' || rtmOptions.value === 'metrics')">
+            <p-table [value]="graphRtmMetricData" [rowHover]="true">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Date</th>
+                  <th>Category</th>
+                  <th>RMSE</th>
+                  <th>RMSEP</th>
+                  <th>MAE</th>
+                  <th>MAPE</th>
+                  <th>MBE</th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-i = "rowIndex">
+                  <ng-container *ngIf="i % 2 === 0">
+                    <tr>
+                      <td pFrozenColumn [attr.rowspan]="3">{{rowData.date | date:'dd-MMM-YYYY'}}
+                      </td>
+                    </tr>
+                  </ng-container>
+                  <tr>
+                  <!-- <td>{{ rowData.date | date:'dd-MMM-YYYY'}}</td> -->
+                  <td>{{ rowData.category }}</td> 
+                  <td [style.color]="getColor(rowData,'RMSE')">{{ rowData.RMSE }}</td>
+                  <td [style.color]="getColor(rowData,'RMSEP')">{{ rowData.RMSEP }}</td>
+                  <td [style.color]="getColor(rowData,'MAE')">{{ rowData.MAE }}</td>
+                  <td [style.color]="getColor(rowData,'MAPE')">{{ rowData.MAPE }}</td>
+                  <td [style.color]="getColor(rowData,'MBE')">{{ rowData.MBE }}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+            
+          </div>
+        </div>
+      </p-card>
+    </div>
+  </section>
+
+</div>

@@ -1,0 +1,165 @@
+<ngx-loading [show]="getAreasLoading || loading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <!-- body contents -->
+  <section id="pageContent">
+    <div class="pageContent-container" *ngIf="listViewSection">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Market Area</span>
+      </div>
+      <div class="PageContent">
+        <p-table #mktAreasdt [sortField]="defaultSortField" [sortOrder]="defaultSortOrder" [value]="filteredMktArea"
+          [paginator]="true" [rowHover]="true" [(first)]="paginatorOptions.first" [rows]="paginatorOptions.rows"
+          [loading]="loading" [showCurrentPageReport]="true"
+          [tableStyle]="{ 'min-width': '50rem', 'font-size': '15px' }"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Market Areas"
+          [rowsPerPageOptions]="paginatorOptions.rowsPerPageOptions" [globalFilterFields]="['name']"
+          (onPage)="onPageChange($event)">
+
+          <ng-template pTemplate="caption">
+            <div class="searchOptions m-1">
+              <div class="column">
+                <p-dropdown [options]="options" [(ngModel)]="selectedOption" (onChange)="changeDropdown()"
+                  optionLabel="name"></p-dropdown>
+              </div>
+              <div class="column">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText name="search" [ngModel]="searchValue" (ngModelChange)="search($event)" type="text"
+                    placeholder="Search" />
+                </span>
+              </div>
+              <button style="margin-left: 10px;" pButton class="p-button-outlined" icon="pi pi-refresh"
+                (click)="clear(mktAreasdt)" pTooltip="Reset" tooltipPosition="left"></button>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name"> Market Area Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="rldc_name">RLDC <p-sortIcon field="rldc_name"></p-sortIcon></th>
+              <th pSortableColumn="country_name">Country <p-sortIcon field="country_name"></p-sortIcon></th>
+              <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-mktArea>
+            <tr>
+              <td>{{ mktArea?.name | uppercase }}</td>
+              <td>{{mktArea?.rldc_name | uppercase}}</td>
+              <td>{{mktArea?.country_name}}</td>
+              <td>
+                <span *ngIf="mktArea?.description.length > 50" [pTooltip]="mktArea?.description" tooltipPosition="top">
+                  {{ mktArea?.description | slice: 0:50 }}...
+                </span>
+                <span *ngIf="mktArea?.description.length <= 50">{{ mktArea?.description }}</span>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-mktArea>
+            <tr>
+              <td colspan="7" style="text-align:center;padding: 1.2rem 1rem;">
+                No Market Areas Data Available
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+
+    <div *ngIf="addMktAreaSection" class="pageContent-container">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName" *ngIf="!mktObj?.id">Add Market Area</span>
+        <span class="pageName" *ngIf="mktObj?.id">Edit Market Area</span>
+      </div>
+      <div class="PageContent flex flex-column gap-4">
+        <form class="useraddform" novalidate #mktArea="ngForm">
+          <div class=" flex flex-column gap-1">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Market Area Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="name" #name="ngModel" [(ngModel)]="mktObj.name"
+                  [style]="{'height':'30px'}" required [ngClass]="{ 'is-invalid': mktArea.submitted && name.errors }"
+                  placeholder="" pInputText maxlength="50" />
+                <div *ngIf="mktArea.submitted && name.errors" class="invalid-feedback">
+                  <div *ngIf="name.errors['required']">Please enter Market Area Name.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Country <span class="error">*</span></label>
+                <p-dropdown [options]="countriesList" name="country_id" #country_id="ngModel" [required]="true"
+                  [(ngModel)]="mktObj.selectedCountry" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': mktArea.submitted && country_id.errors }" optionLabel="name"
+                  placeholder="Select the Country" (onChange)="onCountryChange(mktObj.selectedCountry)">
+                </p-dropdown>
+                <div *ngIf="mktArea.submitted && country_id.errors" class="invalid-feedback">
+                  <div *ngIf="country_id.errors['required']">Please select Country.</div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>RLDCs <span class="error">*</span></label>
+                <p-dropdown name="rldc_id" #rldc_id="ngModel" [(ngModel)]="mktObj.selectedRldcOption"
+                  [options]="rldcsList" optionLabel="name" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': mktArea.submitted && rldc_id.errors }" [required]="true"
+                  placeholder="Select the RLDC" [showClear]="true" class="uppercase-dropdown"
+                  [disabled]="!mktObj.selectedCountry">
+                </p-dropdown>
+                <div *ngIf="mktArea.submitted && rldc_id.errors" class="invalid-feedback">
+                  <div *ngIf="rldc_id.errors['required']">Please select RLDC.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="col-12 md:col-8 lg:col-8 flex flex-column gap-1">
+                <label>Description <span class="error">*</span></label>
+                <textarea type="text" class="title-inp" name="description" #description="ngModel"
+                  [(ngModel)]="mktObj.description" [style]="{'height':'140px'}" required
+                  [ngClass]="{ 'is-invalid': mktArea.submitted && description.errors }" rows="5" maxlength="250"
+                  pInputTextarea>
+                </textarea>
+                <div *ngIf="mktArea.submitted && description.errors" class="invalid-feedback">
+                  <div *ngIf="description.errors['required']"> Please enter Description.</div>
+                  <div *ngIf="description.errors['maxlength']">Description should be at most 250 characters long</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+              <label>Status</label>
+              <div class="rowContainer">
+                <p-inputSwitch name="is_active" #activeStatus="ngModel" [(ngModel)]="mktObj.is_active"
+                  (onChange)="activeStatusChange(mktObj?.is_active)"></p-inputSwitch>
+                <span [ngClass]="{'status-text': true, 'active': mktObj?.is_active, 'inactive': !mktObj?.is_active}">
+                  {{ mktObj?.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ButtonWrap flex gap-2">
+            <p-button type="submit" label="Add" *ngIf="!mktObj?.id"
+              (click)="create_or_update_MarketArea(mktArea,'add',mktObj)"></p-button>
+            <p-button type="submit" label="Update" *ngIf="mktObj?.id"
+              (click)="create_or_update_MarketArea(mktArea,'update',mktObj)"></p-button>
+            <p-button label="Reset" *ngIf="!mktObj?.id" (click)="resetForm(mktArea)"
+              styleClass="p-button-secondary"></p-button>
+            <p-button label="Cancel" (click)="cancelForm()"
+              styleClass="p-button-secondary p-button-outlined"></p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+</div>
+
+
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>

@@ -1,0 +1,245 @@
+<ngx-loading [show]="getUserByIdLoading || loading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <!-- body contents -->
+  <section id="pageContent">
+    <div class="pageContent-container">
+      <div *ngIf="editView">
+        <div class="PageTitle flex align-items-center justify-content-between">
+          <span class="pageName">Edit My Profile</span>
+        </div>
+
+        <div class="PageContent flex flex-column gap-4">
+          <form class="useraddform" novalidate #userForm="ngForm">
+            <div class=" flex flex-column gap-1">
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Profile</label>
+                  <div class="flex align-items-end flex-wrap gap-2">
+                    <img *ngIf="userObj?.profile_image === ''  || userObj?.profile_image === undefined "
+                      src="assets/images/profilepic.jpg" alt="" class="profile-image">
+                    <img *ngIf="userObj?.profile_image" src="{{userObj?.profile_image}}" alt="" class="profile-image">
+                    <!-- <label for="fileInput" class="custom-file-button">
+                      <span>Update</span>
+                      <input type="file" accept=".jpg,.jpeg,.tif,.tiff,.bmp,.gif,.png,.eps,image/raw,image/x-raw-image"
+                        #fileDropRef id="fileDropRef" id="fileInput" single
+                        (change)="fileBrowseHandler($event,userObj)" />
+                    </label> -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class=" flex flex-column gap-1">
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>First Name <span class="error">*</span></label>
+                  <input type="text" class="title-inp" name="first_name" maxlength="50" #user_firstName="ngModel"
+                    [(ngModel)]="userObj.first_name" autocomplete="off" [style]="{'height':'30px'}" required
+                    [ngClass]="{ 'is-invalid': userForm.submitted && user_firstName.errors }" placeholder=""
+                    pInputText />
+                  <div *ngIf="userForm.submitted && user_firstName.errors" class="invalid-feedback">
+                    <div *ngIf="user_firstName.invalid && (user_firstName.dirty || user_firstName.touched)"></div>
+                    <div *ngIf="user_firstName.errors['required']">Please enter Full Name.</div>
+                    <div *ngIf="user_firstName.errors['maxlength']">Name should be at most 20 characters long</div>
+                  </div>
+                </div>
+
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Last Name <span class="error">*</span></label>
+                  <input type="text" class="title-inp" name="last_name" maxlength="50" #user_lastName="ngModel"
+                    [(ngModel)]="userObj.last_name" autocomplete="off" [style]="{'height':'30px'}" required
+                    [ngClass]="{ 'is-invalid': userForm.submitted && user_lastName.errors }" placeholder=""
+                    pInputText />
+                  <div *ngIf="userForm.submitted && user_lastName.errors" class="invalid-feedback">
+                    <div *ngIf="user_lastName.invalid && (user_lastName.dirty || user_lastName.touched)"></div>
+                    <div *ngIf="user_lastName.errors['required']">Please enter Full Name.</div>
+                    <div *ngIf="user_lastName.errors['maxlength']">Name should be at most 20 characters long</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Company <span class="required-asterisk">*</span></label>
+                  <input type="text" class="title-inp" name="company" #company="ngModel" [(ngModel)]="userObj.company"
+                    maxlength="50" [style]="{'height':'30px'}" required
+                    [ngClass]="{ 'is-invalid': userForm.submitted && company.errors }" placeholder="" pInputText />
+                  <div *ngIf="userForm.submitted && company.errors" class="invalid-feedback">
+                    <div *ngIf="company.errors['required']">Company is required</div>
+                  </div>
+                </div>
+
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Job Title <span class="required-asterisk">*</span></label>
+                  <input type="text" class="title-inp" name="title" #title="ngModel" [(ngModel)]="userObj.title"
+                    maxlength="50" [style]="{'height':'30px'}" required
+                    [ngClass]="{ 'is-invalid': userForm.submitted && title.errors }" placeholder="" pInputText />
+
+                  <div *ngIf="userForm.submitted && title.errors" class="invalid-feedback">
+                    <div *ngIf="title.errors['required']">Title is required</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Mobile <span class="required-asterisk">*</span></label>
+                  <div class="input-container" style="display: flex;  align-items: center; flex-wrap: wrap;">
+                    <!-- <p-dropdown [options]="countryCodes" name="country_code" (onChange)="countryChange()"
+                      #country_code="ngModel" [required]="true" [(ngModel)]="userObj.selectedCountryCode"
+                      optionLabel="country_code">
+                      <ng-template let-option pTemplate="item">
+                        <div class="country-option">
+                          <img class="flag-icon" [src]="option.country_image" alt="Flag">
+                          <span>{{ option.country_code }}</span>
+                        </div>
+                      </ng-template>
+
+                      <ng-template let-option pTemplate="selectedItem">
+                        <div class="country-option">
+                          <img class="flag-icon" [src]="option.country_image" alt="Flag">
+                          <span>{{ option.country_code }}</span>
+                        </div>
+                      </ng-template>
+                    </p-dropdown> -->
+
+                    <input style=" margin-left: 5px;" class="title-inp" name="mobile_no" #mobile="ngModel"
+                      pattern="^[0-9]+$" [(ngModel)]="userObj.mobile_no" [style]="{ 'height': '36px' }" pInputText
+                      pKeyFilter="num" pattern="^[0-9]+$" minlength="10" maxlength="10" required
+                      [ngClass]="{ 'is-invalid': (userForm.submitted || mobile.dirty) && mobile.invalid }" />
+
+                    <div *ngIf="(userForm.submitted || mobile.dirty || mobile.touched) && mobile.invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="mobile.errors['required']">Please enter Mobile Number.</div>
+                      <div *ngIf="mobile.errors['minlength']">Mobile Number must be 10 digits.</div>
+                      <div *ngIf="mobile.errors['pattern']">Please enter valid Mobile Number.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Email <span class="error">*</span></label>
+                  <input type="email" class="title-inp" name="email_address" #email_address="ngModel"
+                    [(ngModel)]="userObj.email_address" [style]="{'height':'30px'}" required
+                    [ngClass]="{ 'is-invalid': (userForm.submitted || email_address.dirty) && email_address.invalid }"
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" placeholder="" pInputText readonly/>
+
+                  <div
+                    *ngIf="(userForm.submitted || email_address.dirty || email_address.touched) && email_address.invalid"
+                    class="invalid-feedback">
+                    <div *ngIf="email_address.errors['required']">Email is required</div>
+                    <div *ngIf="email_address.errors['pattern']">Invalid email pattern</div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Address</label>
+                  <textarea type="text" class="title-inp" name="address" #address="ngModel"
+                    [(ngModel)]="userObj.address" [ngClass]="{ 'is-invalid': userForm.submitted && address.errors }"
+                    maxlength="100" placeholder="" pInputTextarea> 
+                  </textarea>
+
+                  <div *ngIf="userForm.submitted && address.errors" class="invalid-feedback">
+                    <div *ngIf="address.errors['required']">Address is required</div>
+                    <div *ngIf="address.errors['maxlength']">Address should be at most 250 characters long</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="ButtonWrap flex gap-2">
+              <p-button label="Submit" type="Submit" (click)="submitProfile(userForm,userObj)"></p-button>
+              <p-button label="Cancel" (click)="cancel(userObj)" styleClass="p-button-secondary "></p-button>
+            </div>
+          </form>
+        </div>
+
+        <!-- end of Add/Edit Profile -->
+      </div>
+
+
+      <div *ngIf="profileView">
+        <div class="PageTitle flex align-items-center justify-content-between">
+          <span class="pageName">My Profile</span>
+          <p-button label="Edit My Profile" icon="pi pi-pencil" (click)="editProfile(user)"
+            styleClass="p-button-sm addBtn"></p-button>
+        </div>
+        <div class="PageContent viewDetails flex flex-column gap-4">
+          <div class=" flex flex-column gap-1">
+            <p-card>
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Profile</label>
+                  <div class="flex align-items-end flex-wrap gap-2">
+                    <img *ngIf="user?.profile_image === '' || user?.profile_image === undefined"
+                      src="assets/images/profilepic.jpg" alt="" class="profile-image">
+                    <img *ngIf="user?.profile_image" src="{{user?.profile_image}}" class="profile-image">
+                  </div>
+                </div>
+              </div>
+            </p-card>
+          </div>
+
+
+
+          <div class=" flex flex-column gap-1">
+            <p-card>
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>First Name</label>
+                  {{user?.first_name}}
+                </div>
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Last Name</label>
+                  {{user?.last_name}}
+                </div>
+              </div>
+
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Email</label>
+                  {{user?.email_address}}
+                </div>
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Company</label>
+                  {{user?.company}}
+                </div>
+              </div>
+
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Mobile</label>
+                  <!-- {{user?.country_code}} -->
+                  {{user?.mobile_no}}
+                </div>
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Job Title</label>
+                  {{user?.title}}
+                </div>
+              </div>
+              <div class="grid">
+                <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                  <label>Address</label>
+                  {{user?.address}}
+                </div>
+              </div>
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+</div>
+
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>

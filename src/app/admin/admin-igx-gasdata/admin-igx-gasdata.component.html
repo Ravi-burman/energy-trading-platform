@@ -1,0 +1,75 @@
+<ngx-loading [show]="getDataLoading"></ngx-loading>
+<div class="db-wrapper">
+    <app-header></app-header>
+    <section id="pageContent">
+        <div class="pageContent-container custom-section">
+            <div class="PageTitle align-items-center justify-content-between">
+                <div class="grid">
+                    <div class="col-12 md:col-12 lg:col-4 custom-head-right">
+                        <!-- <span class="pageName">IGX Gas Data</span> -->
+                    </div>
+                    <div class="col-12 md:col-12 lg:col-6 text-right custom-head-left">
+                        <div *ngIf="selectedTab!='barGraph'">
+                            <div style="display: inline-block;" class="mr-2">
+                                <mat-form-field appearance="outline">
+                                    <mat-date-range-input class="btn btn-main-outline" [max]="maxDate"
+                                        [rangePicker]="picker" [formGroup]="dateRange">
+                                        <input matStartDate formControlName="FromDate">
+                                        <input matEndDate formControlName="ToDate" (dateChange)="onDateRangeChange()">
+                                    </mat-date-range-input>
+                                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-date-range-picker #picker></mat-date-range-picker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="dropDown-box">
+                            <div style="display: inline-block; margin-top:4px" class="mr-2">
+                                <p-dropdown [options]="deliveryAreaOptions" (onChange)="onDeliveryAreaChange()"
+                                    [(ngModel)]="selectedDeliveryArea">
+                                </p-dropdown>
+                            </div>
+                            <div style="display: inline-block; margin-top:4px" class="mr-1">
+                                <p-dropdown [options]="deliveryCodeOptions" (onChange)="onDeliveryCodeChange()"
+                                    [(ngModel)]="selectedDeliveryCode">
+                                </p-dropdown>
+                            </div>
+                        </div>
+                        <div class="col-12 error-msg" *ngIf="dateRange.get('ToDate').hasError('required')">
+                            <mat-error *ngIf="dateRange.get('ToDate').hasError('required')">
+                                please select date
+                            </mat-error>
+                        </div>
+                    </div>
+
+                    <div>
+
+                    </div>
+                </div>
+                <p-card>
+                    <div class="tab-container">
+                        <div class="tab" (click)="selectTab('igxPrice')" [class.active]="selectedTab === 'igxPrice'">
+                            Price Vs Volume 
+                        </div>
+                        <div class="tab" (click)="selectTab('barGraph')" [class.active]="selectedTab === 'barGraph'">
+                            Profile Picture
+                        </div>
+                    </div>
+                    <div *ngIf="selectedTab === 'igxPrice'" class="graphArea" class="tab-content">
+                        <plotly-plot [data]="graph.priceData" [layout]="graph.layout"
+                            [config]="graph.config"></plotly-plot>
+                    </div>
+                    <div  *ngIf="selectedTab === 'barGraph'" class="graphArea" class="tab-content">
+                        <p-dropdown [options]="profiledayOptions" [(ngModel)]="selectedOption" optionLabel="name"
+                        (onChange)="onProfileOptionChange()" placeholder="Select an option">
+                      </p-dropdown>                 
+                    <div *ngIf="selectedTab === 'barGraph'" class="graphArea" class="tab-content">
+                        <plotly-plot [data]="barGraph.priceBarGraphData" [layout]="barGraph.priceLayout"
+                        [config]="barGraph.config" ></plotly-plot>
+                    </div>
+                </div>
+                </p-card>
+
+            </div>
+        </div>
+    </section>
+</div>

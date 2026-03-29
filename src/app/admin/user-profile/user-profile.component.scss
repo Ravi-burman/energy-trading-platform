@@ -1,0 +1,87 @@
+#pageContentforUser .profile-image {
+  display: inline-block;
+  width: 72px;
+  height: 72px;
+  border-radius: 100px;
+  border: #E2E8F0 1px solid;
+}
+
+#pageContentforUser .signatureWrap {
+  background-color: #ffffff;
+  // border: #E2E8F0 1px solid;
+  width: 56%;
+  margin-left: -40px;
+}
+
+.viewDetails label {
+  color: #64748B;
+  font-size: 12px;
+}
+
+.useraddform{
+  .mainform{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    justify-content: space-between;
+    >div{
+      position:relative;
+      padding-bottom:10px;
+      .title-inp{
+        width:100%;
+      }
+    }
+  }
+}
+
+/* Hide the default file input */
+#fileInput {
+display: none;
+}
+#fileInput1 {
+display: none;
+}
+
+/* Style the custom file button */
+.custom-file-button {
+display: inline-block;
+padding: 8px 16px;
+border: 1px solid #ccc;
+background-color: #f0f0f0;
+border-radius: 4px;
+cursor: pointer;
+}
+
+.custom-file-button span {
+/* Adjust the styles to your preference */
+color: #333;
+font-size: 14px;
+}
+
+/* Optional: add hover and active states for visual feedback */
+.custom-file-button:hover {
+background-color: #e0e0e0;
+}
+
+.custom-file-button:active {
+background-color: #d0d0d0;
+}
+
+::ng-deep .p-card .p-card-content {
+padding: 0px !important;
+}
+
+::ng-deep .p-card .p-card-content .grid {
+margin-bottom: 16px !important;
+}
+
+.country-option {
+  display: flex;
+  align-items: center;
+}
+
+.flag-icon {
+  width: 24px;
+  height: 16px;
+  margin-right: 8px;
+}

@@ -1,0 +1,1000 @@
+<ngx-loading [show]="getDataLoading"></ngx-loading>
+<div class="db-wrapper">
+  <app-header></app-header>
+  <p-toast position="top-right"></p-toast>
+  <!-- ------------Application Admin Table --------- -->
+
+  <section id="pageContent" *ngIf="loginUser?.privilege_code === 'application_admin' ">
+    <div class="pageContent-container custom-section">
+
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Status</span>
+      </div>
+      <!-- Import necessary PrimeNG modules in your module file -->
+      <!-- import { TableModule } from 'primeng/table'; -->
+
+      <!-- Add p-table to your HTML file -->
+      <p-table [value]="mergedData" [rowHover]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Target</th>
+            <!-- <th>Category</th> -->
+            <th>Created</th>
+            <th>Forecast Start Time</th>
+            <th>Forecast End Time</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+          <tr>
+            <td>{{ data.TARGET }}</td>
+            <!-- <td>{{ data.category }}</td> -->
+            <td>{{ data.CREATED | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{ data.CREATED |date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{ data.FORECAST_START_TIME | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{ data.FORECAST_START_TIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{ data.FORECAST_END_TIME | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{ data.FORECAST_END_TIME | date:' HH:mm:ss' }} </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+      <!-- <p-card>
+        <div class="grid" *ngFor="let item of foreCastData">
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Target</label>
+            <span class="highlightTxt">{{ item?.TARGET ? item.TARGET : 'No data' }}</span>
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast Last Run</label>
+            {{ item?.CREATED ? (item.CREATED | date:'dd-MMM-YYYY HH:mm:ss') : 'No data' }}
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast Start Time</label>
+            {{ item?.FORECAST_START_TIME ? (item.FORECAST_START_TIME | date:'dd-MMM-YYYY HH:mm:ss') : 'No data' }}
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast End Time</label>
+            {{ item?.FORECAST_END_TIME ? (item.FORECAST_END_TIME | date:'dd-MMM-YYYY HH:mm:ss') : 'No data' }}
+          </div>
+        </div>
+      </p-card> -->
+      <br>
+      <p-card>
+        <h3 class="cardTitle">ETL Process</h3>
+        <table class="dataTable" width="100%">
+          <tr>
+            <th>Process</th>
+            <th>Last Updated</th>
+            <th>Next Update</th>
+            <th>Last Market</th>
+            <th>Last Profile Update</th>
+            <th>Etl Status</th>
+            <th>Last Etl Run</th>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX DAM</td>
+            <td>{{iexData?.DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{iexData?.DAM?.last_profile_update | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel"> {{iexData?.DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.DAM?.etl_status }}"
+                [severity]="iexData.DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX HP DAM</td>
+            <td>{{iexData?.HP_DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.HP_DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.HP_DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{iexData?.HP_DAM?.last_profile_update | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel"> {{iexData?.HP_DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.HP_DAM?.etl_status }}"
+                [severity]="iexData.HP_DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.HP_DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX GDAM</td>
+            <td>{{iexData?.GDAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.GDAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.next_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>{{iexData?.GDAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+
+            </td>
+            <td>{{iexData?.GDAM?.last_profile_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.GDAM?.etl_status }}"
+                [severity]="iexData.GDAM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.GDAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_etl_run | date:'HH:mm:ss'}}</span>
+
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX RTM</td>
+            <td>{{iexData?.RTM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.RTM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.RTM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+            </td>
+            <td>{{iexData?.RTM?.last_profile_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_profile_update| date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{iexData?.RTM?.etl_status }}"
+                [severity]="iexData.RTM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.RTM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_etl_run | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="wbesData">
+            <td>WBES DEMAND</td>
+            <td>{{wbesData?.Demand?.LAST_RUN | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{wbesData?.Demand?.LAST_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.NEXT_UPDATE | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{wbesData.Demand?.NEXT_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.LAST_SCHEDULE_DATETIME | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_SCHEDULE_DATETIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.LAST_PROFILE_UPDATE | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_PROFILE_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{wbesData.Demand?.ETL_STATUS }}"
+                [severity]="wbesData.Demand.ETL_STATUS === 'Success'  ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{wbesData.Demand?.LAST_ETL_RUN | date:'dd-MMM-YYYY'}}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_ETL_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="wbesData">
+            <td>WBES SUPPLY</td>
+            <td>{{wbesData?.Supply?.LAST_RUN | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{wbesData?.Demand?.LAST_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.NEXT_UPDATE | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{wbesData.Supply?.NEXT_UPDATE | date:'HH:MM:SS'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.LAST_SCHEDULE_DATETIME | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_SCHEDULE_DATETIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.LAST_PROFILE_UPDATE | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_PROFILE_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{wbesData.Supply?.ETL_STATUS}}"
+                [severity]="wbesData.Supply.ETL_STATUS === 'Success'  ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{wbesData.Supply?.LAST_ETL_RUN | date:'dd-MMM-YYYY'}}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_ETL_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+
+          <tr *ngIf="pxilData">
+            <td>PXIL DAM</td>
+            <td>{{pxilData?.DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>
+              {{pxilData?.DAM?.last_profile_update ? (pxilData.DAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel"> {{pxilData?.DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.DAM?.etl_status }}"
+                [severity]="pxilData.DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL HP DAM</td>
+            <td>{{pxilData?.HP_DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.HP_DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.HP_DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{pxilData?.HP_DAM?.last_profile_update ? (pxilData.HP_DAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }}<br>
+              <span class="dlabel"> {{pxilData?.HP_DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.HP_DAM?.etl_status }}"
+                [severity]="pxilData.HP_DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.HP_DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL GDAM</td>
+            <td>{{pxilData?.GDAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.GDAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.next_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>{{pxilData?.GDAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+
+            </td>
+            <td>{{pxilData?.GDAM?.last_profile_update ? (pxilData.GDAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.GDAM?.etl_status }}"
+                [severity]="pxilData.GDAM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.GDAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_etl_run | date:'HH:mm:ss'}}</span>
+
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL RTM</td>
+            <td>{{pxilData?.RTM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.RTM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.RTM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+            </td>
+            <td>{{pxilData?.RTM?.last_profile_update ? (pxilData.RTM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_profile_update| date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.RTM?.etl_status }}"
+                [severity]="pxilData.RTM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.RTM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_etl_run | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+
+          <tr *ngIf="igxStatusData">
+            <td>IGX Status</td>
+            <td>{{igxStatusData?.LAST_UPDATED | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{igxStatusData?.LAST_UPDATED | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{igxStatusData?.NEXT_UPDATE | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{igxStatusData?.NEXT_UPDATE | date:'HH:MM:SS'}}</span>
+            </td>
+            <td>{{igxStatusData?.LAST_MARKET_DATE | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{igxStatusData?.LAST_MARKET_DATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td> --  <br>
+        
+
+            </td>
+            <td>
+              <p-badge value="{{igxStatusData?.ETL_STATUS}}"
+                [severity]="igxStatusData.ETL_STATUS === 'Success'  ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{igxStatusData?.LAST_ETL_RUN | date:'dd-MMM-YYYY'}}<br>
+              <span class="dlabel">{{igxStatusData?.LAST_ETL_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+        </table>
+      </p-card>
+    </div>
+
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+
+  <!-- -------------Users Table-------------- -->
+
+  <section id="pageContent" *ngIf="loginUser?.privilege_code === 'greenko_user'">
+
+    <div class="pageContent-container custom-section">
+
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Status</span>
+      </div>
+
+      <p-table [value]="mergedData" [rowHover]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Target</th>
+            <!-- <th>Category</th> -->
+            <th>Created</th>
+            <th>Forecast Start Time</th>
+            <th>Forecast End Time</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+          <tr>
+            <td>{{ data.TARGET }}</td>
+            <!-- <td>{{ data.category }}</td> -->
+            <td>{{ data.CREATED | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{ data.CREATED |date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{ data.FORECAST_START_TIME | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{ data.FORECAST_START_TIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{ data.FORECAST_END_TIME | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{ data.FORECAST_END_TIME | date:' HH:mm:ss' }} </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <!-- <p-card>
+        <h3 class="cardTitle">Forecast Update</h3>
+        <div class="grid" *ngFor="let item of foreCastData">
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Target</label>
+            <span class="highlightTxt">{{item?.TARGET }}</span>
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast Last Run</label>
+            {{item?.CREATED | date:'dd-MMM-YYYY' }} {{item?.CREATED | date:'HH:mm:ss' }}
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast Start Time</label>
+            {{item?.FORECAST_START_TIME| date:'dd-MMM-YYYY'}} {{item?.FORECAST_START_TIME | date:'HH:mm:ss' }}
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast End Time</label>
+            {{item?.FORECAST_END_TIME |date:'dd-MMM-YYYY'}} {{item?.FORECAST_END_TIME | date:'HH:mm:ss' }}
+          </div>
+        </div>
+      </p-card> -->
+      <br>
+      <p-card>
+        <h3 class="cardTitle">ETL Process</h3>
+        <table class="dataTable" width="100%">
+          <tr>
+            <th>Process</th>
+            <th>Last Updated</th>
+            <th>Next Update</th>
+            <th>Last Market</th>
+            <th>Last Profile Update</th>
+            <th>Etl Status</th>
+            <th>Last Etl Run</th>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX DAM</td>
+            <td>{{iexData?.DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{iexData?.DAM?.last_profile_update | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel"> {{iexData?.DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.DAM?.etl_status }}"
+                [severity]="iexData.DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX HP DAM</td>
+            <td>{{iexData?.HP_DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.HP_DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.HP_DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{iexData?.HP_DAM?.last_profile_update | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel"> {{iexData?.HP_DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.HP_DAM?.etl_status }}"
+                [severity]="iexData.HP_DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.HP_DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX GDAM</td>
+            <td>{{iexData?.GDAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.GDAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.next_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>{{iexData?.GDAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+
+            </td>
+            <td>{{iexData?.GDAM?.last_profile_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.GDAM?.etl_status }}"
+                [severity]="iexData.GDAM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.GDAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_etl_run | date:'HH:mm:ss'}}</span>
+
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX RTM</td>
+            <td>{{iexData?.RTM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.RTM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.RTM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+            </td>
+            <td>{{iexData?.RTM?.last_profile_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_profile_update| date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{iexData?.RTM?.etl_status }}"
+                [severity]="iexData.RTM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.RTM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_etl_run | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="wbesData">
+            <td>WBES DEMAND</td>
+            <td>{{wbesData?.Demand?.LAST_RUN | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{wbesData?.Demand?.LAST_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.NEXT_UPDATE | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{wbesData.Demand?.NEXT_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.LAST_SCHEDULE_DATETIME | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_SCHEDULE_DATETIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.LAST_PROFILE_UPDATE | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_PROFILE_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{wbesData.Demand?.ETL_STATUS }}"
+                [severity]="wbesData.Demand.ETL_STATUS === 'Success'  ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{wbesData.Demand?.LAST_ETL_RUN | date:'dd-MMM-YYYY'}}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_ETL_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="wbesData">
+            <td>WBES SUPPLY</td>
+            <td>{{wbesData?.Supply?.LAST_RUN | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{wbesData?.Demand?.LAST_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.NEXT_UPDATE | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{wbesData.Supply?.NEXT_UPDATE | date:'HH:MM:SS'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.LAST_SCHEDULE_DATETIME | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_SCHEDULE_DATETIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.LAST_PROFILE_UPDATE | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_PROFILE_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{wbesData.Supply?.ETL_STATUS}}"
+                [severity]="wbesData.Supply.ETL_STATUS === 'Success'  ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{wbesData.Supply?.LAST_ETL_RUN | date:'dd-MMM-YYYY'}}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_ETL_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL DAM</td>
+            <td>{{pxilData?.DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{pxilData?.DAM?.last_profile_update ? (pxilData.DAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel"> {{pxilData?.DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.DAM?.etl_status }}"
+                [severity]="pxilData.DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL HP DAM</td>
+            <td>{{pxilData?.HP_DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.HP_DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.HP_DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{pxilData?.HP_DAM?.last_profile_update ? (pxilData.HP_DAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }}<br>
+              <span class="dlabel"> {{pxilData?.HP_DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.HP_DAM?.etl_status }}"
+                [severity]="pxilData.HP_DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.HP_DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL GDAM</td>
+            <td>{{pxilData?.GDAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.GDAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.next_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>{{pxilData?.GDAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+
+            </td>
+            <td>{{pxilData?.GDAM?.last_profile_update ? (pxilData.GDAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.GDAM?.etl_status }}"
+                [severity]="pxilData.GDAM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.GDAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_etl_run | date:'HH:mm:ss'}}</span>
+
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL RTM</td>
+            <td>{{pxilData?.RTM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.RTM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.RTM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+            </td>
+            <td>{{pxilData?.RTM?.last_profile_update ? (pxilData.RTM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_profile_update| date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.RTM?.etl_status }}"
+                [severity]="pxilData.RTM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.RTM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_etl_run | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+        </table>
+      </p-card>
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+
+
+  <!----------------  System Admin Table -------------->
+  <section id="pageContent" *ngIf="loginUser?.privilege_code === 'system_admin'">
+
+    <div class="pageContent-container custom-section">
+
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Status</span>
+      </div>
+
+      <p-table [value]="mergedData" [rowHover]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Target</th>
+            <!-- <th>Category</th> -->
+            <th>Created</th>
+            <th>Forecast Start Time</th>
+            <th>Forecast End Time</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-data>
+          <tr>
+            <td>{{ data.TARGET }}</td>
+            <!-- <td>{{ data.category }}</td> -->
+            <td>{{ data.CREATED | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{ data.CREATED |date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{ data.FORECAST_START_TIME | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{ data.FORECAST_START_TIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{ data.FORECAST_END_TIME | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{ data.FORECAST_END_TIME | date:' HH:mm:ss' }} </span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <!-- <p-card>
+        <h3 class="cardTitle">Forecast Update</h3>
+        <div class="grid" *ngFor="let item of foreCastData">
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Target</label>
+            <span class="highlightTxt">{{item?.TARGET }}</span>
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast Last Run</label>
+            {{item?.CREATED | date:'dd-MMM-YYYY' }} {{item?.CREATED | date:'HH:mm:ss' }}
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast Start Time</label>
+            {{item?.FORECAST_START_TIME| date:'dd-MMM-YYYY'}} {{item?.FORECAST_START_TIME | date:'HH:mm:ss' }}
+          </div>
+          <div class="col-12 md:col-3 lg:col-3 flex flex-column gap-1">
+            <label class="dlabel">Forecast End Time</label>
+            {{item?.FORECAST_END_TIME |date:'dd-MMM-YYYY'}} {{item?.FORECAST_END_TIME | date:'HH:mm:ss' }}
+          </div>
+        </div>
+      </p-card> -->
+      <br><br>
+
+      <h3 class="cardTitle">ETL Process</h3>
+      <p-card>
+        <table class="dataTable" width="100%">
+          <tr>
+            <th>Process</th>
+            <th>Last Updated</th>
+            <th>Next Update</th>
+            <th>Last Market</th>
+            <th>Last Profile Update</th>
+            <th>Etl Status</th>
+            <th>Last Etl Run</th>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX DAM</td>
+            <td>{{iexData?.DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{iexData?.DAM?.last_profile_update | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel"> {{iexData?.DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.DAM?.etl_status }}"
+                [severity]="iexData.DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX HP DAM</td>
+            <td>{{iexData?.HP_DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.HP_DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.HP_DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{iexData?.HP_DAM?.last_profile_update | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel"> {{iexData?.HP_DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.HP_DAM?.etl_status }}"
+                [severity]="iexData.HP_DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.HP_DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.HP_DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX GDAM</td>
+            <td>{{iexData?.GDAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.GDAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.next_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>{{iexData?.GDAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+
+            </td>
+            <td>{{iexData?.GDAM?.last_profile_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{iexData?.GDAM?.etl_status }}"
+                [severity]="iexData.GDAM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.GDAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.GDAM?.last_etl_run | date:'HH:mm:ss'}}</span>
+
+            </td>
+          </tr>
+          <tr *ngIf="iexData">
+            <td>IEX RTM</td>
+            <td>{{iexData?.RTM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.RTM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{iexData?.RTM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+            </td>
+            <td>{{iexData?.RTM?.last_profile_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_profile_update| date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{iexData?.RTM?.etl_status }}"
+                [severity]="iexData.RTM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{iexData?.RTM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{iexData?.RTM?.last_etl_run | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="wbesData">
+            <td>WBES DEMAND</td>
+            <td>{{wbesData?.Demand?.LAST_RUN | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{wbesData?.Demand?.LAST_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.NEXT_UPDATE | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{wbesData.Demand?.NEXT_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.LAST_SCHEDULE_DATETIME | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_SCHEDULE_DATETIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Demand?.LAST_PROFILE_UPDATE | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_PROFILE_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{wbesData.Demand?.ETL_STATUS }}"
+                [severity]="wbesData.Demand.ETL_STATUS === 'Success'  ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{wbesData.Demand?.LAST_ETL_RUN | date:'dd-MMM-YYYY'}}<br>
+              <span class="dlabel">{{wbesData.Demand?.LAST_ETL_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="wbesData">
+            <td>WBES SUPPLY</td>
+            <td>{{wbesData?.Supply?.LAST_RUN | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{wbesData?.Demand?.LAST_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.NEXT_UPDATE | date:'dd-MMM-YYYY' }} <br>
+              <span class="dlabel">{{wbesData.Supply?.NEXT_UPDATE | date:'HH:MM:SS'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.LAST_SCHEDULE_DATETIME | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_SCHEDULE_DATETIME | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{wbesData.Supply?.LAST_PROFILE_UPDATE | date:'dd-MMM-YYYY' }}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_PROFILE_UPDATE | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{wbesData.Supply?.ETL_STATUS}}"
+                [severity]="wbesData.Supply.ETL_STATUS === 'Success'  ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{wbesData.Supply?.LAST_ETL_RUN | date:'dd-MMM-YYYY'}}<br>
+              <span class="dlabel">{{wbesData.Supply?.LAST_ETL_RUN | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL DAM</td>
+            <td>{{pxilData?.DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{pxilData?.DAM?.last_profile_update ? (pxilData.DAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel"> {{pxilData?.DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.DAM?.etl_status }}"
+                [severity]="pxilData.DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL HP DAM</td>
+            <td>{{pxilData?.HP_DAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.HP_DAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.HP_DAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_market_datetime | date:'HH:mm:ss' }} </span>
+            </td>
+
+            <td>{{pxilData?.HP_DAM?.last_profile_update ? (pxilData.HP_DAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }}<br>
+              <span class="dlabel"> {{pxilData?.HP_DAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.HP_DAM?.etl_status }}"
+                [severity]="pxilData.HP_DAM.etl_status === 'Success' ? 'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.HP_DAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.HP_DAM?.last_etl_run | date:'HH:mm:ss'}} </span>
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL GDAM</td>
+            <td>{{pxilData?.GDAM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.GDAM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.next_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>{{pxilData?.GDAM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+
+            </td>
+            <td>{{pxilData?.GDAM?.last_profile_update ? (pxilData.GDAM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_profile_update | date:'HH:mm:ss'}}</span>
+
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.GDAM?.etl_status }}"
+                [severity]="pxilData.GDAM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.GDAM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.GDAM?.last_etl_run | date:'HH:mm:ss'}}</span>
+
+            </td>
+          </tr>
+          <tr *ngIf="pxilData">
+            <td>PXIL RTM</td>
+            <td>{{pxilData?.RTM?.last_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.RTM?.next_update | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.next_update | date:'HH:mm:ss'}}</span>
+            </td>
+            <td>{{pxilData?.RTM?.last_market_datetime | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_market_datetime| date:'HH:mm:ss'}} </span>
+            </td>
+            <td>{{pxilData?.RTM?.last_profile_update ? (pxilData.RTM.last_profile_update | date:'dd-MMM-YYYY') : '--' }} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_profile_update| date:'HH:mm:ss'}}</span>
+            </td>
+            <td>
+              <p-badge value="{{pxilData?.RTM?.etl_status }}"
+                [severity]="pxilData.RTM.etl_status === 'Success' ?  'success' : 'danger'">
+              </p-badge>
+            </td>
+            <td>{{pxilData?.RTM?.last_etl_run | date:'dd-MMM-YYYY'}} <br>
+              <span class="dlabel">{{pxilData?.RTM?.last_etl_run | date:'HH:mm:ss'}}</span>
+            </td>
+          </tr>
+        </table>
+      </p-card>
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+</div>

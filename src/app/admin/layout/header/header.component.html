@@ -1,0 +1,156 @@
+<header class="header fixed-top d-flex align-items-center">
+  <div class="logo d-flex align-items-center" style="margin-left: 8px;">
+    <!-- <a >
+      <i  (click)="toggleNav()" class="pi pi-bars toggle-sidebar-btn" style="font-size: x-large;"></i>
+    </a> -->
+    <a routerLink="/home" class="d-flex align-items-center ml-3">
+      <img src="assets/images/logo.svg" class="appLogo" alt="">
+    </a>
+  </div>
+  <!-- ---------- Application Admin Header --------------- -->
+  <div class="topbar-menu-Wrap" *ngIf="loginUser?.privilege_code === 'application_admin'">
+    <ul class="topbar-menu">
+      <li><a routerLink="/home" routerLinkActive="active">DASHBOARD</a></li>
+      <!-- <li><a routerLink="/status" routerLinkActive="active">STATUS</a></li> -->
+    </ul>
+  </div>
+
+  <!-- --------------- Local User Admin Header --------------- -->
+  <div class="topbar-menu-Wrap" *ngIf="loginUser?.privilege_code === 'greenko_user'">
+    <ul class="topbar-menu">
+      <li><a routerLink="/home" routerLinkActive="active">DASHBOARD</a></li>
+      <!-- <li><a routerLink="/status" routerLinkActive="active">STATUS</a></li> -->
+    </ul>
+  </div>
+
+  <!-- -------System Admin Hearder----- -->
+
+  <div class="topbar-menu-Wrap" *ngIf="loginUser?.privilege_code === 'system_admin'">
+    <ul class="topbar-menu">
+      <!-- <li><a routerLink="/home" routerLinkActive="active">DASHBOARD</a></li> -->
+      <li><a routerLink="/status" routerLinkActive="active">SYSTEM STATUS</a></li>
+    </ul>
+  </div>
+
+
+
+  <nav class="header-nav ms-auto">
+    <ul class="d-flex align-items-center">
+      <li class="nav-item dropdown pe-3">
+        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+          <img *ngIf="user?.profile_image === ''  || user?.profile_image === undefined "
+            src="assets/images/profilepic.jpg" alt="" width="32" height="32" class="rounded-circle">
+          <img *ngIf="user?.profile_image" src="{{user?.profile_image}}" alt="mdo" width="32" height="32"
+            class="rounded-circle">
+          <span class="d-none d-md-block dropdown-toggle ps-2">{{user?.first_name}}</span>
+        </a><!-- End Profile Iamge Icon -->
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+          <li class="dropdown-header hide-on-lg">
+            <h6>{{user?.first_name}} {{user?.last_name}}</h6> 
+            <span>{{user?.title}}</span>
+          </li>
+          <li class="hide-on-lg">
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center" routerLink="/user-profile">
+              <i class="pi pi-user"></i>
+              <span>My Profile</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center" routerLink="/login">
+              <i class="pi pi-power-off"></i>
+              <span>Sign Out</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</header>
+<section id="sidenav">
+
+  
+  <!-- system admin sidenav -->
+  <section *ngIf="loginUser?.privilege_code === 'system_admin'">
+    <div class="menuConfigBtn" (click)="toggleNav()"><i class="pi pi-angle-right"></i></div>
+    <div>
+      <div class="groupNav">
+        <p>DEFINITIONS</p>
+      </div>
+      <div class="sidenav-container">
+        <ul id="layout-menu" class="layout-menu">
+          <li routerLinkActive="active" *ngFor="let item of list;let i=index" [routerLink]="item.route"
+            style="cursor: pointer;">
+            <a>
+              <i class={{item.class}}></i>
+              <span>{{item.li}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Users Admin Section -->
+
+  <section *ngIf="loginUser?.privilege_code === 'greenko_user'">
+    <div class="menuConfigBtn" (click)="toggleNav()"><i class="pi pi-angle-right"></i></div>
+    <div>
+      <!-- Greenko User Sidenav Content -->
+      <div class="groupNav">
+        <p>GRAPH</p>
+      </div>
+      <div class="sidenav-container">
+        <ul id="layout-menu" class="layout-menu">
+          <li routerLinkActive="active" *ngFor="let item of list2;let i=index" [routerLink]="item.route">
+            <a>
+              <i class={{item.class}}></i>
+              <span>{{item.li}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- application admin sidenav -->
+  <section *ngIf="loginUser?.privilege_code === 'application_admin'" style="overflow: auto;">
+    <div class="menuConfigBtn" (click)="toggleNav()"><i class="pi pi-angle-right"></i></div>
+    <div>
+      <div class="groupNav">
+        <p>DEFINITIONS</p>
+      </div>
+      <div class="sidenav-container">
+        <ul id="layout-menu" class="layout-menu">
+          <li routerLinkActive="active" *ngFor="let item of list3;let i=index" [routerLink]="item.route"
+            style="cursor: pointer;">
+            <a>
+              <i class={{item.class}}></i>
+              <span>{{item.li}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="groupNav">
+        <p>FORECAST</p>
+      </div>
+      <div class="sidenav-container">
+        <ul id="layout-menu" class="layout-menu">
+          <li routerLinkActive="active" *ngFor="let item of list4;let i=index" [routerLink]="item.route"
+            style="cursor: pointer;">
+            <a>
+              <i class={{item.class}}></i>
+              <span class="damalign">{{item.li}}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</section>

@@ -1,0 +1,180 @@
+
+<ngx-loading [show]="getEntityLoading || loading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <!-- body contents -->
+  <section id="pageContent">
+    <div class="pageContent-container" *ngIf="listViewSection">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName"> Individual Entities</span>
+      </div>
+      <div class="PageContent">
+        <p-table #individualEntitiesdt [sortField]="defaultSortField" [sortOrder]="defaultSortOrder" [value]="filteredEntities"
+          [paginator]="true" [rowHover]="true" [(first)]="paginatorOptions.first" [rows]="paginatorOptions.rows"
+          [loading]="loading" [showCurrentPageReport]="true"
+          [tableStyle]="{ 'min-width': '50rem', 'font-size': '15px' }"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Individual Entities"
+          [rowsPerPageOptions]="paginatorOptions.rowsPerPageOptions" [globalFilterFields]="['name']"
+          (onPage)="onPageChange($event)">
+
+          <ng-template pTemplate="caption">
+            <div class="searchOptions m-1">
+
+              <div class="column">
+                <p-dropdown [options]="options" [(ngModel)]="selectedOption" (onChange)="changeDropdown()"
+                  optionLabel="name"></p-dropdown>
+              </div>
+
+              <div class="column">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText name="search" [ngModel]="searchValue" (ngModelChange)="search($event)" type="text"
+                  placeholder="Search" />
+                </span>
+              </div>
+              <button style="margin-left: 10px;" pButton class="p-button-outlined" icon="pi pi-refresh"
+                (click)="clear(individualEntitiesdt)" pTooltip="Reset" tooltipPosition="left"></button>
+            </div>
+          </ng-template>
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="name"> Entity Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="parent_type_name">Parent Type <p-sortIcon field="parent_type_name"></p-sortIcon></th>
+              <th pSortableColumn="parent_value_name">Parent <p-sortIcon field="parent_value_name"></p-sortIcon></th>
+              <th pSortableColumn="country_name">Country <p-sortIcon field="country_name"></p-sortIcon></th>
+              <th pSortableColumn="type">Type <p-sortIcon field="type"></p-sortIcon></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-individualEntity>
+            <tr>
+              <td>{{ individualEntity?.name | uppercase }}</td>
+              <td>{{individualEntity?.parent_type_name | uppercase}}</td>
+              <td>{{individualEntity?.parent_value_name | uppercase}}</td>
+              <td>{{ individualEntity?.country_name}}</td>
+              <td>{{individualEntity?.type | uppercase}}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-individualEntity>
+            <tr>
+              <td colspan="7" style="text-align:center;padding: 1.2rem 1rem;">
+                No Individual Entities Data Available
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    <div *ngIf="addStateSection" class="pageContent-container">
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName" *ngIf="!entityObj?.id">Add Individual Entity</span>
+        <span class="pageName" *ngIf="entityObj?.id">Edit Individual Entity</span>
+      </div>
+      <div class="PageContent flex flex-column gap-4">
+        <form class="useraddform" novalidate #individualEntityForm="ngForm">
+          <div class=" flex flex-column gap-1">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Individual Entity Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="name" #name="ngModel" [(ngModel)]="entityObj.name"
+                  [style]="{'height':'30px'}" required [ngClass]="{ 'is-invalid': individualEntityForm.submitted && name.errors }"
+                  placeholder="" pInputText maxlength="50" />
+                <div *ngIf="individualEntityForm.submitted && name.errors" class="invalid-feedback">
+                  <div *ngIf="name.errors['required']">Please enter State.</div>
+                </div>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Country<span class="error">*</span></label>
+                
+                <p-dropdown [options]="countriesList" name="country_id" #country="ngModel" [required]="true"
+                  [(ngModel)]="entityObj.selectedCountry" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': individualEntityForm.submitted && country.errors }" optionLabel="name"
+                  placeholder="Select the Country" (onChange)="onCountryChange(entityObj.selectedCountry)">
+                </p-dropdown>
+
+                <div *ngIf="individualEntityForm.submitted && country.errors" class="invalid-feedback">
+                  <div *ngIf="country.errors['required']">Please select Country.</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Parent Type<span class="error">*</span></label>
+                <p-dropdown [options]="selectedParentOptions" name="parent_type_id" #parentType="ngModel"
+                  [required]="true" [(ngModel)]="entityObj.selectedParent" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': individualEntityForm.submitted && parentType.errors }" optionLabel="name"
+                  placeholder="Select the Parent Type" [disabled]="!entityObj.selectedCountry"
+                  (onChange)="onParentTypeChange(entityObj.selectedParent)">
+                </p-dropdown>
+
+                <div *ngIf="individualEntityForm.submitted && parentType.errors" class="invalid-feedback">
+                  <div *ngIf="parentType.errors['required']">Please select Parent Type.</div>
+                </div>
+              </div>
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Parent<span class="error">*</span></label>
+                 <p-dropdown [options]="selectedParent" name="parent_value_id" #parent="ngModel" [required]="true"
+                  [(ngModel)]="entityObj.selectedParentEntity" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': individualEntityForm.submitted && parent.errors }" optionLabel="name"
+                  placeholder="Select the Parent" [disabled]="!entityObj.selectedParent">
+                </p-dropdown>
+                <div *ngIf="individualEntityForm.submitted && parentType.errors" class="invalid-feedback">
+                  <div *ngIf="parentType.errors['required']">Please select Parent.</div>
+                </div>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Type<span class="error">*</span></label>
+                <p-dropdown [options]="typeList" name="type" #type="ngModel" [required]="true"
+                  [(ngModel)]="entityObj.selectedType" [style]="{'height':'30px', 'width':'100%'}"
+                  [ngClass]="{ 'is-invalid': individualEntityForm.submitted && type.errors }" optionLabel="value"
+                  placeholder="Select the Type">
+                </p-dropdown>
+
+                <div *ngIf="individualEntityForm.submitted && type.errors" class="invalid-feedback">
+                  <div *ngIf="type.errors['required']">Please select a Type.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+              <label>Status</label>
+              <div class="rowContainer">
+                <p-inputSwitch name="is_active" #activeStatus="ngModel" [(ngModel)]="entityObj.is_active"
+                  (onChange)="activeStatusChange(entityObj?.is_active)"></p-inputSwitch>
+                <span
+                  [ngClass]="{'status-text': true, 'active': entityObj?.is_active, 'inactive': !entityObj?.is_active}">
+                  {{ entityObj?.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ButtonWrap flex gap-2">
+            <p-button type="submit" label="Add" *ngIf="!entityObj?.id"
+              (click)="create_or_update_Entity(individualEntityForm,'add',entityObj)"></p-button>
+            <p-button type="submit" label="Update" *ngIf="entityObj?.id"
+              (click)="create_or_update_Entity(individualEntityForm,'update',entityObj)"></p-button>
+
+            <p-button label="Reset" *ngIf="!entityObj?.id" (click)="resetForm(individualEntityForm)"
+              styleClass="p-button-secondary">
+            </p-button>
+            <p-button label="Cancel" (click)="cancelForm()"
+              styleClass="p-button-secondary p-button-outlined"></p-button>
+          </div>
+        </form>
+      </div>      
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+</div>
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>

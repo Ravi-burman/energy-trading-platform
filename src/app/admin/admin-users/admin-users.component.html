@@ -1,0 +1,263 @@
+<ngx-loading [show]="getUsersLoading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+
+  <p-toast position="top-right"></p-toast>
+
+  <!-- body contents -->
+  <section id="pageContent">
+    <div class="pageContent-container" *ngIf="listViewSection">
+
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">View Users</span>
+        <p-button label="Add User" icon="pi pi-plus-circle" (click)="addUser()"
+          styleClass="p-button-sm addBtn"></p-button>
+      </div>
+
+      <!-- <div class="PageContent" *ngIf="filteredUsers?.length == 0">No Users Data Available</div> -->
+      <div class="PageContent">
+        <p-table #userdt [sortField]="defaultSortField" [sortOrder]="defaultSortOrder" [value]="filteredUsers"
+          [paginator]="true" [rowHover]="true" [(first)]="paginatorOptions.first" [rows]="paginatorOptions.rows"
+          [loading]="loading" [showCurrentPageReport]="true"
+          [tableStyle]="{ 'min-width': '50rem', 'font-size': '15px' }"
+          currentPageReportTemplate=" Showing {first} to {last} of {totalRecords} Users"
+          [rowsPerPageOptions]="paginatorOptions.rowsPerPageOptions"
+          [globalFilterFields]="['first_name', 'last_name','role_name']" (onPage)="onPageChange($event)">
+
+
+          <ng-template pTemplate="caption">
+            <div class="searchOptions m-1">
+
+              <div class="column">
+                <p-dropdown [options]="options" (onChange)="changeDropdown()" [(ngModel)]="selectedOption"
+                  optionLabel="name">
+                </p-dropdown>
+              </div>
+
+              <div class="column">
+                <span class="p-input-icon-left">
+                  <i class="pi pi-search"></i>
+                  <input pInputText name="search" [ngModel]="searchValue" (ngModelChange)="search($event)" type="text" placeholder="Search"/>
+                  <!-- <input pInputText name="search" #search="ngModel" [(ngModel)]="searchValue" type="text"
+                   (input)="userdt.filterGlobal(search.value, 'contains')" placeholder="Search" /> -->
+                </span>
+              </div>
+
+              <div class="column">
+                Status : <p-dropdown [options]="statuses" (onChange)="changeStatusfilter(selectedStatus.value)"
+                  [(ngModel)]="selectedStatus" optionLabel="name"></p-dropdown>
+              </div>
+              <button style="margin-left: 10px;" pButton class="p-button-outlined" icon="pi pi-refresh"
+                (click)="clear(userdt)" pTooltip="Reset" tooltipPosition="left"></button>
+            </div>
+          </ng-template>
+
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th pSortableColumn="first_name">First Name <p-sortIcon field="first_name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="last_name">Last Name <p-sortIcon field="last_name"></p-sortIcon>
+              </th>
+              <th pSortableColumn="role_name">Role Name <p-sortIcon field="role_name"></p-sortIcon></th>
+              <th pSortableColumn="email_address" style="width:25%"> Email ID <p-sortIcon
+                  field="email_address"></p-sortIcon></th>
+              <th pSortableColumn="status">Status <p-sortIcon field="status"></p-sortIcon></th>
+              <!-- <th pSortableColumn="deleted">Deleted <p-sortIcon field="deleted"></p-sortIcon></th> -->
+              <th></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-user>
+            <tr>
+              <!-- {{user | json}} -->
+              <!-- {{selectedRoleOption | json}} -->
+              <td>{{ user?.first_name | uppercase}} </td>
+              <td> {{user?.last_name | uppercase}}</td>
+              <td>{{ user?.role_name  | uppercase}}</td>
+              <td>{{ user?.email_address }}</td>
+              <td *ngIf="user?.is_active === true">
+                <div class="status-tag">
+                  <span class="w-1rem h-1rem border-circle border-1 surface-border absolute bg-green-400"></span>
+                  <span class="tagTxt">Active</span>
+                </div>
+              </td>
+              <td *ngIf="user?.is_active === false">
+                <div class="status-tag">
+                  <span class="w-1rem h-1rem border-circle border-1 surface-border absolute bg-red-400"></span>
+                  <span class="tagTxt">Inactive</span>
+                </div>
+
+              </td>
+              <!-- <td>{{ user?.deleted }}</td> -->
+              <td class="text-right gap-1" style="text-wrap:nowrap;">
+                <p-button icon="pi pi-pencil" (click)="addUser(user)"
+                  styleClass="p-button-sm p-button-secondary p-button-text ml-1" pTooltip="Edit User"
+                  tooltipPosition="left"></p-button>
+                <p-button icon="pi pi-trash" (click)="deleteUser(user)"
+                  styleClass="p-button-sm p-button-secondary p-button-text ml-2" pTooltip="Delete User"
+                  tooltipPosition="left"></p-button>
+                <!-- <p-button icon="pi pi-ellipsis-v" styleClass="p-button-sm p-button-secondary p-button-text"></p-button> -->
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage" let-user>
+            <tr>
+              <td colspan="7" style="text-align:center;padding: 1.2rem 1rem;">
+                No Users Data Available
+              </td>
+            </tr>
+          </ng-template>
+          <!-- <ng-template pTemplate="paginatorleft">
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+          </ng-template>
+        <ng-template pTemplate="paginatorright">
+           <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+        </ng-template> -->
+        </p-table>
+      </div>
+
+    </div>
+
+
+
+    <div *ngIf="addUserSection" class="pageContent-container">
+
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName" *ngIf="!userObj?.id">Add New user</span>
+        <span class="pageName" *ngIf="userObj?.id">Edit User</span>
+      </div>
+
+
+      <div class="PageContent flex flex-column gap-4">
+        <form class="useraddform" novalidate #userForm="ngForm">
+          <div class=" flex flex-column gap-1">
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>First Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="first_name" #first_name="ngModel"
+                  [(ngModel)]="userObj.first_name" [style]="{'height':'30px'}" required
+                  [ngClass]="{ 'is-invalid': userForm.submitted && first_name.errors }" placeholder="" pInputText
+                  maxlength="50" />
+                <div *ngIf="userForm.submitted && first_name.errors" class="invalid-feedback">
+                  <div *ngIf="first_name.errors['required']">Please enter First Name. </div>
+                </div>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Last Name <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="last_name" #last_name="ngModel"
+                  [(ngModel)]="userObj.last_name" [style]="{'height':'30px'}" required
+                  [ngClass]="{ 'is-invalid': userForm.submitted && last_name.errors }" placeholder="" pInputText
+                  maxlength="50" />
+                <div *ngIf="userForm.submitted && last_name.errors" class="invalid-feedback">
+                  <div *ngIf="last_name.errors['required']">Please enter Last Name. </div>
+                </div>
+              </div>
+            </div>
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Email ID <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="email_address" #email_address="ngModel"
+                  [(ngModel)]="userObj.email_address" [style]="{'height':'30px'}" required
+                  [ngClass]="{ 'is-invalid': userForm.submitted && email_address.errors }"
+                  pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,9}$" placeholder="" pInputText />
+                <div *ngIf="userForm.submitted && email_address.errors" class="invalid-feedback">
+                  <!-- <div *ngIf="(email_address.errors && email_address.touched || userForm.submitted)" class="invalid-feedback"> -->
+                  <div *ngIf="email_address.errors['required']">Please enter Email ID.</div>
+                  <div *ngIf="email_address.errors['pattern']"> Please enter valid Email ID.</div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Status <span class="error">*</span></label>
+                <input type="text" class="title-inp" name="title" #title="ngModel" [(ngModel)]="userObj.title"
+                  [style]="{'height':'30px'}" required [ngClass]="{ 'is-invalid': userForm.submitted && title.errors }"
+                  placeholder="" pInputText maxlength="50" />
+                <div *ngIf="userForm.submitted && title.errors" class="invalid-feedback">
+                  <div *ngIf="title.errors['required']">Please enter Title. </div>
+                </div>
+              </div>
+            </div> -->
+
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Role Name <span class="error">*</span></label>
+                <p-dropdown [options]="roles" name="role_id" #role_id="ngModel" [required]="true"
+                  [(ngModel)]="userObj.selectedRoleOption"
+                  [ngClass]="{ 'is-invalid': userForm.submitted && role_id.errors }" optionLabel="name"
+                  placeholder="Select the Role">
+                </p-dropdown>
+
+                <div *ngIf="userForm.submitted && role_id.errors" class="invalid-feedback">
+                  <div *ngIf="role_id.errors['required']">Please select Role Name.</div>
+                </div>
+              </div>
+
+            </div>
+
+
+            <!-- <div class="grid">
+
+          <div class="col-12 md:col-8 lg:col-8 flex flex-column gap-1">
+
+            <label>Description <span class="error">*</span></label>
+            <textarea type="text" class="title-inp" name="user_description" #user_description="ngModel" [(ngModel)]="userObj.user_description" [style]="{'height':'140px'}" required [ngClass]="{ 'is-invalid': userForm.submitted && user_description.errors }" rows="5"  pInputTextarea title="" maxlength="250">
+              </textarea>
+              <div *ngIf="userForm.submitted && user_description.errors" class="invalid-feedback">
+                <div *ngIf="user_description.errors['required']"> Please enter Description.</div>
+              </div>              
+
+          </div>
+
+        </div> -->
+
+          </div>
+
+
+          <div class="grid">
+            <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+              <label>Status</label>
+              <div class="rowContainer">
+                <p-inputSwitch name="is_active" #activeStatus="ngModel" [(ngModel)]="userObj.is_active"
+                  (onChange)="activeStatusChange(userObj?.is_active)"></p-inputSwitch>
+                <span [ngClass]="{'status-text': true, 'active': userObj?.is_active, 'inactive': !userObj?.is_active}">
+                  {{ userObj?.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ButtonWrap flex gap-2">
+            <p-button type="submit" label="Add" *ngIf="!userObj?.id"
+              (click)="createUser(userForm,'add',userObj)"></p-button>
+            <p-button type="submit" label="Update" *ngIf="userObj?.id"
+              (click)="createUser(userForm,'update',userObj)"></p-button>
+
+            <p-button label="Reset" *ngIf="!userObj?.id" (click)="resetForm(userForm)"
+              styleClass="p-button-secondary"></p-button>
+
+            <!-- <p-button label="Delete" styleClass="p-button-secondary p-button-outlined"></p-button> -->
+
+            <p-button label="Cancel" (click)="cancelForm()" styleClass="p-button-secondary "></p-button>
+
+          </div>
+        </form>
+
+      </div>
+
+    </div>
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+
+</div>
+
+
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>

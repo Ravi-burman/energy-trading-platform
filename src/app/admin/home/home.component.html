@@ -1,0 +1,303 @@
+<ngx-loading [show]="getDataLoading"></ngx-loading>
+<div class="db-wrapper">
+  <app-header></app-header>
+ 
+  <!-- System Admin-->
+  <section id="pageContent" *ngIf="loginUser?.privilege_code === 'system_admin'">
+    <!-- System Admin Dash board
+    <section id="footer">© Greenko Group. All rights reserved</section> -->
+    <!-- <app-admin-status></app-admin-status> -->
+  </section>
+
+  <!-- Application Admin -->
+
+  <section id="pageContent" *ngIf="loginUser?.privilege_code === 'application_admin'">
+    <div class="pageContent-container custom-section">
+      <!-- <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">India Trendz</span>
+      </div> -->
+      <p-card>
+        <div class="tab-container">
+          <div class="tab" (click)="selectTab('priceDemand')" [class.active]="selectedTab === 'priceDemand'">Price
+            vs Demand
+          </div>
+          <div class="tab" (click)="selectTab('priceDemandStatistics')"
+            [class.active]="selectedTab === 'priceDemandStatistics'">Price
+            vs Demand Statistics
+          </div>
+          <div class="tab" (click)="selectTab('priceVolume')" [class.active]="selectedTab === 'priceVolume'">Price
+            vs Volume
+          </div>
+          <div class="tab" (click)="selectTab('priceVolumeStatistics')"
+            [class.active]="selectedTab === 'priceVolumeStatistics'">Price
+            vs Volume Statistics
+          </div>
+        </div>
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceDemand'" class="grid matDate">
+            <div class="col-12 errorMessage">
+              <mat-form-field appearance="outline">
+                <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                  [formGroup]="dateRange">
+                  <input matStartDate formControlName="FromDate">
+                  <input matEndDate formControlName="ToDate" (dateChange)="onDateRangeChange()">
+
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="dateRange.get('ToDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+          <div *ngIf="selectedTab === 'priceDemand'" class="graphArea" class="tab-content">
+            <plotly-plot [data]="graph.priceData" [layout]="graph.layout" [config]="graph.config"></plotly-plot>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceDemandStatistics'" class="grid matDate">
+            <div class="col-12 errorMessage">
+              <mat-form-field appearance="outline">
+                <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker1"
+                  [formGroup]="meanRange">
+                  <input matStartDate formControlName="StartDate">
+                  <input matEndDate formControlName="CurrentDate" (dateChange)="onMeanDateRangeChange()">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker1></mat-date-range-picker>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="meanRange.get('CurrentDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+              <mat-error *ngIf="meanRange.get('CurrentDate').value-meanRange.get('StartDate').value===0">
+                Please select atleast two days
+              </mat-error>
+            </div>
+          </div>
+          <div *ngIf="selectedTab === 'priceDemandStatistics'" class="tab-content">
+            <plotly-plot [data]="meanGraph.meanData" [layout]="meanGraph.layout"
+              [config]="meanGraph.config"></plotly-plot>
+          </div>
+        </div>
+
+
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceVolume'" class="grid matDate">
+            <div class="col-12 errorMessage">
+              <div style="display: inline-block; margin-right: 8px;">
+                <mat-form-field appearance="outline">
+                  <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker2"
+                    [formGroup]="dateVolumeRange">
+                    <input matStartDate formControlName="FromDate">
+                    <input matEndDate formControlName="ToDate" (dateChange)="onDateVolumeRangeChange()">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker2></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+              <p-dropdown [options]="priceVolumeOptions" [(ngModel)]="selectedOption" optionLabel="name"
+                (onChange)="onPriceVolumeOptionChange()" placeholder="Select an option">
+              </p-dropdown>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="dateVolumeRange.get('ToDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="selectedTab === 'priceVolume'" class="tab-content">
+          <plotly-plot [data]="volumeGraph.volumeData" [layout]="volumeGraph.layout"
+            [config]="volumeGraph.config"></plotly-plot>
+        </div>
+
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceVolumeStatistics'" class="grid matDate">
+            <div class="col-12 errorMessage">
+              <div style="display: inline-block; margin-right: 8px;">
+                <mat-form-field appearance="outline">
+                  <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker3"
+                    [formGroup]="meanVolumeRange">
+                    <input matStartDate formControlName="StartMeanDate">
+                    <input matEndDate formControlName="CurrentMeanDate" (dateChange)="onMeanVolumeDateRange()">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker3"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker3></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+
+              <p-dropdown [options]="priceMeanVolumeOptions" [(ngModel)]="onMeanSelection" optionLabel="name"
+                (onChange)="onMeanPriceVolumeOptionChange()" placeholder="DAM">
+              </p-dropdown>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="meanVolumeRange.get('CurrentMeanDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+              <mat-error *ngIf="meanVolumeRange.get('CurrentMeanDate').value-meanVolumeRange.get('StartMeanDate').value===0">
+                Please select atleast two days
+              </mat-error>
+            </div>
+
+          </div>
+          <div *ngIf="selectedTab === 'priceVolumeStatistics'" class="tab-content">
+            <plotly-plot [data]="meanVolumeGraph.meanVolumeData" [layout]="meanVolumeGraph.layout"
+              [config]="meanVolumeGraph.config"></plotly-plot>
+          </div>
+
+        </div>
+      </p-card>
+    </div>
+
+
+
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+
+  <!-- -- Users Admin -- -->
+
+  <section id="pageContent" *ngIf="loginUser?.privilege_code === 'greenko_user'">
+    <div class="pageContent-container custom-section">
+      <!-- <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">India Trendz</span>
+      </div> -->
+      <p-card>
+        <div class="tab-container ">
+          <div class="tab" (click)="selectTab('priceDemand')" [class.active]="selectedTab === 'priceDemand'">Price
+            vs Demand
+          </div>
+          <div class="tab" (click)="selectTab('priceDemandStatistics')"
+            [class.active]="selectedTab === 'priceDemandStatistics'">Price
+            vs Demand Statistics
+          </div>
+          <div class="tab" (click)="selectTab('priceVolume')" [class.active]="selectedTab === 'priceVolume'">Price
+            vs Volume
+          </div>
+          <div class="tab" (click)="selectTab('priceVolumeStatistics')"
+            [class.active]="selectedTab === 'priceVolumeStatistics'">Price
+            vs Volume Statistics
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceDemand'" class="grid matDate">
+            <div class="col-12">
+              <mat-form-field appearance="outline">
+                  <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                    [formGroup]="dateRange">
+                    <input matStartDate formControlName="FromDate">
+                    <input matEndDate formControlName="ToDate" (dateChange)="onDateRangeChange()">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="dateRange.get('ToDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+          <div *ngIf="selectedTab === 'priceDemand'" class="graphArea" class="tab-content">
+            <plotly-plot [data]="graph.priceData" [layout]="graph.layout" [config]="graph.config"></plotly-plot>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceDemandStatistics'" class="grid matDate">
+            <div class="col-12">
+              <mat-form-field appearance="outline">
+                <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker1"
+                  [formGroup]="meanRange">
+                  <input matStartDate formControlName="StartDate">
+                  <input matEndDate formControlName="CurrentDate" (dateChange)="onMeanDateRangeChange()">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker1></mat-date-range-picker>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="meanRange.get('CurrentDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+          <div *ngIf="selectedTab === 'priceDemandStatistics'" class="tab-content">
+            <plotly-plot [data]="meanGraph.meanData" [layout]="meanGraph.layout"
+              [config]="meanGraph.config"></plotly-plot>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceVolume'" class="grid matDate">
+            <div class="col-12">
+              <div style="display: inline-block; margin-right: 8px;">
+                <mat-form-field appearance="outline">
+                  <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker"
+                    [formGroup]="dateVolumeRange">
+                    <input matStartDate formControlName="FromDate">
+                    <input matEndDate formControlName="ToDate" (dateChange)="onDateVolumeRangeChange()">
+                  </mat-date-range-input>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+              </div>
+              <p-dropdown [options]="priceVolumeOptions" [(ngModel)]="selectedOption" optionLabel="name"
+              (onChange)="onPriceVolumeOptionChange()" placeholder="Select an option">
+            </p-dropdown>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="dateVolumeRange.get('ToDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+          <div *ngIf="selectedTab === 'priceVolume'" class="tab-content">
+            <plotly-plot [data]="volumeGraph.volumeData" [layout]="volumeGraph.layout"
+              [config]="volumeGraph.config"></plotly-plot>
+          </div>
+        </div>
+
+        <div style="position:relative;">
+          <div *ngIf="selectedTab === 'priceVolumeStatistics'" class="grid matDate">
+            <div class="col-12">
+              <div style="display: inline-block; margin-right: 8px;">
+              <mat-form-field appearance="outline">
+                <mat-date-range-input class="btn btn-main-outline" [max]="maxDate" [rangePicker]="picker1"
+                  [formGroup]="meanVolumeRange">
+                  <input matStartDate formControlName="StartMeanDate">
+                  <input matEndDate formControlName="CurrentMeanDate" (dateChange)="onMeanVolumeDateRange()">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker1></mat-date-range-picker>
+              </mat-form-field>
+            </div>
+            <p-dropdown [options]="priceMeanVolumeOptions" [(ngModel)]="onMeanSelection" optionLabel="name"
+            (onChange)="onMeanPriceVolumeOptionChange()" placeholder="DAM">
+          </p-dropdown>
+            </div>
+            <div class="col-12">
+              <mat-error *ngIf="meanVolumeRange.get('CurrentMeanDate').hasError('required')">
+                Please select To Date
+              </mat-error>
+            </div>
+          </div>
+          <div *ngIf="selectedTab === 'priceVolumeStatistics'" class="tab-content">
+            <plotly-plot [data]="meanVolumeGraph.meanVolumeData" [layout]="meanVolumeGraph.layout"
+              [config]="meanVolumeGraph.config"></plotly-plot>
+          </div>
+        </div>
+      </p-card>
+    </div>
+
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+
+
+</div>

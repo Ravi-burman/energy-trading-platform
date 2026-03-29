@@ -1,0 +1,118 @@
+
+.header-wrapper{
+    background-color: black;
+    color: white;
+    .logo-sub{
+        cursor:pointer;
+        padding: 16px 0 0 16px;
+    }
+    display: flex;
+    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 20%), 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%);
+    z-index: 1;
+    .nav{
+        margin-left: auto;
+        >ul{
+            list-style: none;
+    display: flex;
+    height: 100%;
+    margin: 0;
+    align-items: center;
+
+            list-style: none;display: flex;
+            >li{
+                transition: background-color .3s;
+                &:first-child{
+                    cursor:none;
+                    &:hover{
+                        cursor: default;
+                        i{
+                            cursor: default;
+                        }
+                    }
+                }
+                height: 100%;
+    border-right: .5px solid #9f519c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    @media only screen and (max-width: 420px){
+        padding: 12px 8px;
+    }
+               &:hover{
+                   cursor: pointer;
+                //    background-color: white;
+                //    color:#9f519c;
+               }
+                font-size: 15px;
+                // &:not(:last-child){
+
+                //     margin-right: 20px;
+                // }
+            }
+        }
+    }
+}
+.logoAfterLogin{
+    width: 200px;
+    @media only screen and (max-width: 420px){
+        width: 150px;
+    }
+}
+
+@media only screen and (max-width: 600px){
+    .hide-on-low{
+        display: none !important;
+    }
+}
+// ----------------
+.groupNav{
+    margin-top: 14px;
+    margin-left: 21px;
+    color: #64748B;
+}
+
+// Side Navbar Scroll Style
+::-webkit-scrollbar {
+    width: 4px; 
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #888; 
+  }
+  
+  ::-webkit-scrollbar-track {
+    background-color: #f1f1f1; 
+  }
+  .damalign{
+    margin-right: -24px;
+  }
+//   ::ng-deep.p-sidebar-left {
+//     margin-top: 60px !important;
+//     width: 15rem !important;
+//     overflow-y: hidden !important;  
+//   }
+//   ::ng-deep .p-sidebar .p-sidebar-header {
+//     padding: 1rem;
+//     display: none;
+// }
+// .p-sidebar-content {
+//     overflow-y: hidden !important;  
+// }
+// .overlay {
+//     position: fixed;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+//     z-index: 999; /* Make sure the overlay is above other elements */
+//   }
+  
+  /* Add this to prevent scrolling when the sidebar is open */
+//   body.sidebar-open {
+//     overflow: hidden;
+//   }
+
+  
+
+  

@@ -1,0 +1,109 @@
+.searchOptions {
+  display: block;
+  text-align: right;
+}
+
+.searchOptions .column {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+.searchOptions .column .p-element {
+  display: inline-flex;
+}
+
+.status-tag {
+  position: relative;
+  display: inline-block;
+  height: 16px;
+  line-height: normal;
+}
+
+.status-tag .tagTxt {
+  display: inline-block;
+  padding-left: 24px;
+}
+
+.useraddform {
+  .mainform {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    >div {
+      position: relative;
+      padding-bottom: 10px;
+
+      .title-inp {
+        width: 100%;
+      }
+    }
+  }
+}
+#pageContent{
+  overflow-y: auto;
+}
+.status-tag {
+  position: relative;
+  display: inline-block;
+  height: 16px;
+  line-height: normal;
+}
+
+.status-tag .tagTxt {
+  display: inline-block;
+  padding-left: 24px;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody>tr {
+  height: 20px;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody>tr {
+  line-height: 1;
+}
+
+::ng-deep .p-datatable .p-datatable-tbody>tr>td {
+  padding: 0.3rem 1rem;
+  // padding: 0.3rem 1rem;
+  font-size: 14px;
+}
+
+::ng-deep .p-datatable .p-datatable-thead>tr>th {
+  background: #cbd5e1 !important;
+  padding: 14px 16px;
+}
+
+::ng-deep .p-datatable .p-sortable-column.p-highlight {
+  background: #cbd5e1 !important;
+}
+
+::ng-deep .p-paginator {
+  display: block !important;
+  background-color: transparent !important;
+}
+
+::ng-deep .p-datatable .p-paginator-bottom {
+  border-width: 0px !important;
+  text-align: right !important;
+}
+
+
+@media screen and (max-width: 960px) {}
+
+@media screen and (max-width: 480px) {
+  .searchOptions {
+    display: block;
+    text-align: left;
+  }
+
+  .searchOptions .sepLine {
+    display: none;
+  }
+
+  .searchOptions .column {
+    display: block;
+    margin: 0 0 8px 0;
+  }
+}

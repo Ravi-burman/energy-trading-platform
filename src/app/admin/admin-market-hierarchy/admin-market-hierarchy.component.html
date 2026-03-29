@@ -1,0 +1,81 @@
+<ngx-loading [show]="getMktHierarchyLoading"></ngx-loading>
+<p-toast position="top-right"></p-toast>
+
+<div class="db-wrapper">
+  <app-header></app-header>
+  <!-- body contents -->
+  <section id="pageContent">
+
+
+
+    <div class="pageContent-container">
+
+      <div class="PageTitle flex align-items-center justify-content-between">
+        <span class="pageName">Market Hierarchies</span>
+      </div>
+
+      <!-- <div class="column">
+          <label>Country <span class="error">*</span></label> <br>
+            <p-dropdown [options]="options" [(ngModel)]="selectedOption"
+              optionLabel="name"></p-dropdown>
+          </div> -->
+
+
+      <!-- <div class=" flex flex-column gap-1" >
+            <div class="grid">
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Country <span class="error">*</span></label>
+               
+                <p-dropdown [options]="countriesList" [(ngModel)]="selectedOption"
+                  optionLabel="name"  placeholder="Select Providers" (ngModelChange)="onCountryChange(selectedOption);onSelectionChange(selectedOption,selectedCities);"></p-dropdown>
+               
+              </div>
+
+              <div class="col-12 md:col-6 lg:col-4 flex flex-column gap-1">
+                <label>Provider <span class="error">*</span></label>
+                <p-multiSelect [options]="market_providers" [(ngModel)]="selectedCities" defaultLabel="Select Providers" optionLabel="name" display="chip" (ngModelChange)="onSelectionChange(selectedOption,selectedCities); " ></p-multiSelect>
+
+             
+               
+              </div>
+              </div>
+              </div> -->
+      
+      <div class="grid" *ngIf="listViewSection">
+        
+        <div class="col-12 md:col-6 lg:col-6 flex flex-column gap-1">
+          <p-card>
+            <canvasjs-chart
+              [options]="chartOptions"
+              [styles]="{ width: '100%', height: '360px' }"
+            ></canvasjs-chart>
+          </p-card>
+        </div>
+
+        <div class="col-12 md:col-6 lg:col-6 flex flex-column gap-1">
+          <p-card>
+            <canvasjs-chart
+              [options]="cOptions"
+              [styles]="{ width: '100%', height: '360px' }"
+            ></canvasjs-chart>
+          </p-card>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- </div> -->
+
+
+
+
+    <section id="footer">© Greenko Group. All rights reserved</section>
+  </section>
+
+</div>
+
+
+<p-confirmDialog acceptIcon="" rejectIcon="" [icon]="''" styleClass="gk-confirm-dialog" defaultFocus="none"
+  [breakpoints]="{'578px': '95vw'}" [style]="{width: '35vw'}" [baseZIndex]="10000"
+  rejectButtonStyleClass="p-button-text"></p-confirmDialog>
