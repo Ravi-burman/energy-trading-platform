@@ -7,7 +7,9 @@
     <!-- SIGN IN -->
     <div class="signInWrap flex flex-column gap-4">
       <div class="signInWrap-container">
-        <img class="logo-appName" src="assets/images/logo.svg" alt="">
+        <!-- <img class="logo-appName" src="assets/images/logo.svg" alt="EnergySync"> -->
+        <h2 style="color: #1976d2; margin: 10px 0; font-size: 24px; font-weight: bold;">EnergySync</h2>
+        <p style="color: #666; margin-bottom: 20px; font-size: 14px;">Real-time Energy Market Platform</p>
         <h4>Login to your account</h4><br>
 
         <form novalidate #f="ngForm" (ngSubmit)="login(f)">
@@ -45,9 +47,12 @@
 
           <BR>
           <p-button label="LogIn" type="submit" [style]="{width: '100%'}"></p-button>
+          <p style="text-align: center; margin-top: 15px; font-size: 12px; color: #999;">
+            💡 <strong>Test Credentials:</strong> admin@energysync.com / admin123
+          </p>
         </form>
       </div>
-      <section id="footer">© Greenko Group. All rights reserved.</section>
+      <section id="footer">© EnergySync All rights reserved.</section>
     </div>
 
   </div>

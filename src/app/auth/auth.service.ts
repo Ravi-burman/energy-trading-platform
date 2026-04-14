@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { GlobalService } from '../services/global.service';
 import { HttpService } from '../services/http.service';
 import { ApiConfigService } from '../admin/services/api-config.service';
-import { Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
 @Injectable()
 export class AuthServices {
@@ -24,6 +24,26 @@ export class AuthServices {
   login(obj:{headers?:any,params?:any,data?:any}):any{
     let url = this.api.getApiUrl('login');
     return this.http.xhr({url,method:'P', ...obj})
+  }
+
+  // Mock login for development/testing with dummy credentials
+  mockLogin():any{
+    // Return a mock response that simulates backend response
+    return of({
+      status: 'Success',
+      data: {
+        message: 'Login successful',
+        user: {
+          id: '1',
+          username: 'admin',
+          email: 'admin@energysync.com',
+          name: 'Admin User',
+          roles: ['admin']
+        },
+        apiToken: 'mock-token-' + Date.now(),
+        privilege_code: 'greenko_user'
+      }
+    });
   }
   
   setLoginStatus(isLoggedIn: boolean) {
